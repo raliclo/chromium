@@ -70,4 +70,5 @@ def FinalizeApk(apksigner_path,
                             print_stdout=True,
                             fail_on_output=warnings_as_errors)
     shutil.move(staging_file.name, final_apk_path)
-    staging_file.delete = False
+    # The file was moved away: on Python 3 only the closer's flag stops the unlink.
+    staging_file._closer.delete = False  # pylint: disable=protected-access
