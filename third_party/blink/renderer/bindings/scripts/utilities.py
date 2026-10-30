@@ -210,7 +210,7 @@ class ComponentInfoProviderModules(ComponentInfoProvider):
 
 def load_interfaces_info_overall_pickle(info_dir):
     with open(os.path.join(info_dir,
-                           'interfaces_info.pickle')) as interface_info_file:
+                           'interfaces_info.pickle'), 'rb') as interface_info_file:
         return pickle.load(interface_info_file)
 
 
@@ -238,7 +238,7 @@ def create_component_info_provider_core(info_dir):
     interfaces_info = load_interfaces_info_overall_pickle(info_dir)
     with open(
             os.path.join(info_dir, 'core',
-                         'component_info_core.pickle')) as component_info_file:
+                         'component_info_core.pickle'), 'rb') as component_info_file:
         component_info = pickle.load(component_info_file)
     return ComponentInfoProviderCore(interfaces_info, component_info)
 
@@ -247,12 +247,12 @@ def create_component_info_provider_modules(info_dir):
     interfaces_info = load_interfaces_info_overall_pickle(info_dir)
     with open(
             os.path.join(info_dir, 'core',
-                         'component_info_core.pickle')) as component_info_file:
+                         'component_info_core.pickle'), 'rb') as component_info_file:
         component_info_core = pickle.load(component_info_file)
     with open(
             os.path.join(
                 info_dir, 'modules',
-                'component_info_modules.pickle')) as component_info_file:
+                'component_info_modules.pickle'), 'rb') as component_info_file:
         component_info_modules = pickle.load(component_info_file)
     return ComponentInfoProviderModules(interfaces_info, component_info_core,
                                         component_info_modules)
@@ -347,7 +347,7 @@ def write_file(new_text, destination_filename):
 def write_pickle_file(pickle_filename, data):
     # If |data| is same with the file content, we skip updating.
     if os.path.isfile(pickle_filename):
-        with open(pickle_filename) as pickle_file:
+        with open(pickle_filename, 'rb') as pickle_file:
             try:
                 if pickle.load(pickle_file) == data:
                     return
