@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright 2017 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -162,7 +162,7 @@ class OutputFilePaths(object):
 
 
 def print_duration(step, start):
-  print 'Duration of %s: %d seconds' % (step, time.time() - start)
+  print('Duration of %s: %d seconds' % (step, time.time() - start))
 
 
 def IsWindows():
@@ -309,8 +309,8 @@ def execute_gtest_perf_test(command_generator, output_paths, use_xvfb=False):
           return_code = test_env.run_command_output_to_handle(
               command, handle, env=env)
         except OSError as e:
-          print('Command to run gtest perf test %s failed with an OSError: %s' %
-                (output_paths.name, e))
+          print(('Command to run gtest perf test %s failed with an OSError: %s' %
+                (output_paths.name, e)))
           return_code = 1
     if (not os.path.exists(output_paths.perf_results) and
         os.path.exists(output_paths.logs)):
@@ -333,8 +333,8 @@ def execute_gtest_perf_test(command_generator, output_paths, use_xvfb=False):
         # pylint: enable=no-name-in-module
       gtest_json_converter.ConvertGtestJsonFile(output_paths.perf_results)
   else:
-    print('ERROR: gtest perf test %s did not generate perf output' %
-          output_paths.name)
+    print(('ERROR: gtest perf test %s did not generate perf output' %
+          output_paths.name))
     return_code = 1
   write_simple_test_results(return_code, output_paths.test_results,
                             output_paths.name)
@@ -478,7 +478,7 @@ def execute_telemetry_benchmark(
   except Exception:
     print ('The following exception may have prevented the code from '
            'outputing structured test results and perf results output:')
-    print traceback.format_exc()
+    print(traceback.format_exc())
   finally:
     # Add ignore_errors=True because otherwise rmtree may fail due to leaky
     # processes of tests are still holding opened handles to files under
@@ -493,8 +493,8 @@ def execute_telemetry_benchmark(
   # TODO(crbug.com/1019139): Make 111 be the exit code that means
   # "no stories were run.".
   if return_code in (111, -1, 255):
-    print ('Exit code %s indicates that no stories were run, so we are marking '
-           'this as a success.' % return_code)
+    print(('Exit code %s indicates that no stories were run, so we are marking '
+           'this as a success.' % return_code))
     return 0
   if return_code:
     return return_code
@@ -582,7 +582,7 @@ def main(sys_args):
     if not benchmark_name:
       benchmark_name = options.executable
     output_paths = OutputFilePaths(isolated_out_dir, benchmark_name).SetUp()
-    print('\n### {folder} ###'.format(folder=benchmark_name))
+    print(('\n### {folder} ###'.format(folder=benchmark_name)))
     overall_return_code = execute_gtest_perf_test(
         command_generator, output_paths, options.xvfb)
     test_results_files.append(output_paths.test_results)
@@ -595,7 +595,7 @@ def main(sys_args):
         output_paths = OutputFilePaths(isolated_out_dir, benchmark).SetUp()
         command_generator = TelemetryCommandGenerator(
             benchmark, options)
-        print('\n### {folder} ###'.format(folder=benchmark))
+        print(('\n### {folder} ###'.format(folder=benchmark)))
         return_code = execute_telemetry_benchmark(
             command_generator, output_paths, options.xvfb)
         overall_return_code = return_code or overall_return_code
@@ -638,14 +638,14 @@ def main(sys_args):
       if 'benchmarks' in shard_configuration:
         benchmarks_and_configs = shard_configuration['benchmarks']
         for (benchmark, story_selection_config
-             ) in benchmarks_and_configs.iteritems():
+             ) in benchmarks_and_configs.items():
           # Need to run the benchmark on both latest browser and reference
           # build.
           output_paths = OutputFilePaths(isolated_out_dir, benchmark).SetUp()
           command_generator = TelemetryCommandGenerator(
               benchmark, options,
               story_selection_config=story_selection_config)
-          print('\n### {folder} ###'.format(folder=benchmark))
+          print(('\n### {folder} ###'.format(folder=benchmark)))
           return_code = execute_telemetry_benchmark(
               command_generator, output_paths, options.xvfb)
           overall_return_code = return_code or overall_return_code
@@ -658,8 +658,8 @@ def main(sys_args):
                 benchmark, options,
                 story_selection_config=story_selection_config,
                 is_reference=True)
-            print('\n### {folder} ###'.format(
-                folder=reference_benchmark_foldername))
+            print(('\n### {folder} ###'.format(
+                folder=reference_benchmark_foldername)))
             # We intentionally ignore the return code and test results of the
             # reference build.
             execute_telemetry_benchmark(
@@ -668,7 +668,7 @@ def main(sys_args):
       if 'executables' in shard_configuration:
         names_and_configs = shard_configuration['executables']
         for (name, configuration
-             ) in names_and_configs.iteritems():
+             ) in names_and_configs.items():
           additional_flags = []
           if 'arguments' in configuration:
             additional_flags = configuration['arguments']
@@ -676,7 +676,7 @@ def main(sys_args):
               options, override_executable=configuration['path'],
               additional_flags=additional_flags, ignore_shard_env_vars=True)
           output_paths = OutputFilePaths(isolated_out_dir, name).SetUp()
-          print('\n### {folder} ###'.format(folder=name))
+          print(('\n### {folder} ###'.format(folder=name)))
           return_code = execute_gtest_perf_test(
               command_generator, output_paths, options.xvfb)
           overall_return_code = return_code or overall_return_code

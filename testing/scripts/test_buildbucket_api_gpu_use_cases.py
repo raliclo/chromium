@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright 2019 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -95,11 +95,11 @@ def main(argv):
     error_msg = test()
     if error_msg is not None:
       result = '%s: %s' % (test_name, error_msg)
-      print 'FAIL: %s' % result
+      print('FAIL: %s' % result)
       failures.append(result)
 
   if not failures:
-    print 'PASS: test_buildbucket_api_gpu_use_cases ran successfully.'
+    print('PASS: test_buildbucket_api_gpu_use_cases ran successfully.')
     retval = 0
 
   with open(args.isolated_script_test_output, 'w') as json_file:

@@ -64,7 +64,7 @@ class UploadTestResultArtifactsTest(unittest.TestCase):
 
   def loadTestEndToEndSimple(self):
     test_data = self.makeTestJson(1, 10)
-    print self._loadTest(test_data, False)
+    print(self._loadTest(test_data, False))
 
   def loadTestEndToEndManySmall(self):
     test_data = self.makeTestJson(1000, 10)

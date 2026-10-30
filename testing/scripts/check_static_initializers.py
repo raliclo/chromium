@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright 2018 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -105,7 +105,7 @@ def main_mac(src_dir, allow_coverage_initializer = False):
         initializers_s = re.search('size 0x([0-9a-f]+)',
                                    stdout[section_index:]).group(1)
         word_size = 8  # Assume 64 bit
-        si_count = int(initializers_s, 16) / word_size
+        si_count = int(initializers_s, 16) // word_size
 
       # Print the list of static initializers.
       if si_count > 0:
@@ -122,16 +122,16 @@ def main_mac(src_dir, allow_coverage_initializer = False):
             if re.match('0x[0-9a-f]+', line) and not any(
                 f in line for f in _MAC_SI_FILE_ALLOWLIST):
               ret = 1
-              print 'Found invalid static initializer: {}'.format(line)
-          print stdout
+              print('Found invalid static initializer: {}'.format(line))
+          print(stdout)
         else:
           allowed_si_count = FALLBACK_EXPECTED_MAC_SI_COUNT
           if allow_coverage_initializer:
             allowed_si_count = COVERAGE_BUILD_FALLBACK_EXPECTED_MAC_SI_COUNT
           if si_count > allowed_si_count:
-            print('Expected <= %d static initializers in %s, but found %d' %
+            print(('Expected <= %d static initializers in %s, but found %d' %
                 (allowed_si_count, chromium_framework_executable,
-                si_count))
+                si_count)))
             ret = 1
             show_mod_init_func = os.path.join(mac_tools_path,
                                               'show_mod_init_func.py')
@@ -139,14 +139,14 @@ def main_mac(src_dir, allow_coverage_initializer = False):
             if os.path.exists(framework_unstripped_name):
               args.append(framework_unstripped_name)
             else:
-              print '# Warning: Falling back to potentially stripped output.'
+              print('# Warning: Falling back to potentially stripped output.')
               args.append(chromium_framework_executable)
 
             if os.path.exists(hermetic_xcode_path):
               args.extend(['--xcode-path', hermetic_xcode_path])
 
             stdout = run_process(args)
-            print stdout
+            print(stdout)
   return ret
 
 
@@ -180,11 +180,11 @@ def main_linux(src_dir, is_chromeos):
     for f in files_with_si:
       if f not in allowlist[binary_name]:
         ret = 1
-        print('Error: file "%s" is not expected to have static initializers in'
-              ' binary "%s"') % (f, binary_name)
+        print(('Error: file "%s" is not expected to have static initializers in'
+              ' binary "%s"') % (f, binary_name))
 
-    print '\n# Static initializers in %s:' % binary_name
-    print stdout
+    print('\n# Static initializers in %s:' % binary_name)
+    print(stdout)
 
   return ret
 

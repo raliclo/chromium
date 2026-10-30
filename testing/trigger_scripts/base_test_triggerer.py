@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright 2018 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -20,7 +20,7 @@ import os
 import subprocess
 import sys
 import tempfile
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import logging
 
 SRC_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(
@@ -61,14 +61,14 @@ def _convert_to_go_swarming_args(args):
 def strip_unicode(obj):
   """Recursively re-encodes strings as utf-8 inside |obj|. Returns the result.
   """
-  if isinstance(obj, unicode):
+  if isinstance(obj, str):
     return obj.encode('utf-8', 'replace')
   if isinstance(obj, list):
     return list(map(strip_unicode, obj))
 
   if isinstance(obj, dict):
     new_obj = type(obj)(
-        (strip_unicode(k), strip_unicode(v)) for k, v in obj.iteritems() )
+        (strip_unicode(k), strip_unicode(v)) for k, v in obj.items() )
     return new_obj
   return obj
 
@@ -108,7 +108,7 @@ class BaseTestTriggerer(object):
       bot_args.append('GTEST_TOTAL_SHARDS')
       bot_args.append(str(total_shards))
     if self._bot_configs:
-      for key, val in sorted(self._bot_configs[bot_index].iteritems()):
+      for key, val in sorted(self._bot_configs[bot_index].items()):
         bot_args.append('--dimension')
         bot_args.append(key)
         bot_args.append(val)
@@ -150,7 +150,7 @@ class BaseTestTriggerer(object):
     try:
       temp_file = self.make_temp_file(prefix='base_trigger_dimensions',
                                       suffix='.json')
-      encoded_args = urllib.urlencode(query_args)
+      encoded_args = urllib.parse.urlencode(query_args)
       args =['query',
              '-S',
              server,
@@ -171,7 +171,7 @@ class BaseTestTriggerer(object):
     # Query Swarming to figure out which bots are available.
     for config in self._bot_configs:
       values = []
-      for key, value in sorted(config.iteritems()):
+      for key, value in sorted(config.items()):
         values.append(('dimensions', '%s:%s' % (key, value)))
       # Ignore dead and quarantined bots.
       values.append(('is_dead', 'FALSE'))
@@ -194,7 +194,7 @@ class BaseTestTriggerer(object):
           'Total bots: %d' % (self._total_bots))
 
   def remove_swarming_dimension(self, args, dimension):
-    for i in xrange(len(args)):
+    for i in range(len(args)):
       if args[i] == '--dimension' and args[i+1] == dimension:
         return args[:i] + args[i+3:]
     return args
@@ -243,7 +243,7 @@ class BaseTestTriggerer(object):
       task['request']['task_id']: task['request']
       for task  in result_json['tasks']
     }
-    for k, v in tasks.items():
+    for k, v in list(tasks.items()):
       v['shard_index'] = shard_index
       merged_json['tasks'][k + ':%d:%d' % (shard_index, shards)] = v
     self.write_json_to_file(merged_json, json_path)
@@ -265,7 +265,7 @@ class BaseTestTriggerer(object):
   def indices_to_trigger(self, args):
     """Returns the indices of the swarming shards that should be triggered."""
     if args.shard_index is None:
-      return range(args.shards)
+      return list(range(args.shards))
     else:
       return [args.shard_index]
 
@@ -293,7 +293,7 @@ class BaseTestTriggerer(object):
     # dimensions on the command line.
     filtered_remaining_args = copy.deepcopy(remaining)
     for config in self._bot_configs:
-      for k in config.iterkeys():
+      for k in config.keys():
         filtered_remaining_args = self.remove_swarming_dimension(
           filtered_remaining_args, k)
 

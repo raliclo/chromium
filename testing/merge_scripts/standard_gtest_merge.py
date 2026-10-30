@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright 2017 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -27,13 +27,13 @@ Please examine logs to figure out what happened.
 
 
 def emit_warning(title, log=None):
-  print '@@@STEP_WARNINGS@@@'
-  print title
+  print('@@@STEP_WARNINGS@@@')
+  print(title)
   if log:
     title = title.rstrip()
     for line in log.splitlines():
-      print '@@@STEP_LOG_LINE@%s@%s@@@' % (title, line.rstrip())
-    print '@@@STEP_LOG_END@%s@@@' % title
+      print('@@@STEP_LOG_LINE@%s@%s@@@' % (title, line.rstrip()))
+    print('@@@STEP_LOG_END@%s@@@' % title)
 
 
 def merge_shard_results(summary_json, jsons_to_merge):
@@ -72,16 +72,16 @@ def merge_shard_results(summary_json, jsons_to_merge):
     # client/swarming.py, which means the state enum is saved in its string
     # name form, not in the number form.
     state = result.get('state')
-    if state == u'BOT_DIED':
+    if state == 'BOT_DIED':
       emit_warning('Shard #%d had a Swarming internal failure' % index)
-    elif state == u'EXPIRED':
+    elif state == 'EXPIRED':
       emit_warning('There wasn\'t enough capacity to run your test')
-    elif state == u'TIMED_OUT':
+    elif state == 'TIMED_OUT':
       emit_warning(
           'Test runtime exceeded allocated time',
           'Either it ran for too long (hard timeout) or it didn\'t produce '
           'I/O for an extended period of time (I/O timeout)')
-    elif state != u'COMPLETED':
+    elif state != 'COMPLETED':
       emit_warning('Invalid Swarming task state: %s' % state)
 
     json_data, err_msg = load_shard_json(index, result.get('task_id'),
@@ -145,10 +145,10 @@ def load_shard_json(index, task_id, jsons_to_merge):
            os.path.basename(os.path.dirname(j)) == task_id))]
 
   if not matching_json_files:
-    print >> sys.stderr, 'shard %s test output missing' % index
+    print('shard %s test output missing' % index, file=sys.stderr)
     return (None, 'shard %s test output was missing' % index)
   elif len(matching_json_files) > 1:
-    print >> sys.stderr, 'duplicate test output for shard %s' % index
+    print('duplicate test output for shard %s' % index, file=sys.stderr)
     return (None, 'shard %s test output was duplicated' % index)
 
   path = matching_json_files[0]
@@ -156,15 +156,15 @@ def load_shard_json(index, task_id, jsons_to_merge):
   try:
     filesize = os.stat(path).st_size
     if filesize > OUTPUT_JSON_SIZE_LIMIT:
-      print >> sys.stderr, 'output.json is %d bytes. Max size is %d' % (
-           filesize, OUTPUT_JSON_SIZE_LIMIT)
+      print('output.json is %d bytes. Max size is %d' % (
+           filesize, OUTPUT_JSON_SIZE_LIMIT), file=sys.stderr)
       return (None, 'shard %s test output exceeded the size limit' % index)
 
     with open(path) as f:
       return (json.load(f), None)
   except (IOError, ValueError, OSError) as e:
-    print >> sys.stderr, 'Missing or invalid gtest JSON file: %s' % path
-    print >> sys.stderr, '%s: %s' % (type(e).__name__, e)
+    print('Missing or invalid gtest JSON file: %s' % path, file=sys.stderr)
+    print('%s: %s' % (type(e).__name__, e), file=sys.stderr)
 
     return (None, 'shard %s test output was missing or invalid' % index)
 
@@ -172,7 +172,7 @@ def load_shard_json(index, task_id, jsons_to_merge):
 def merge_list_of_dicts(left, right):
   """Merges dicts left[0] with right[0], left[1] with right[1], etc."""
   output = []
-  for i in xrange(max(len(left), len(right))):
+  for i in range(max(len(left), len(right))):
     left_dict = left[i] if i < len(left) else {}
     right_dict = right[i] if i < len(right) else {}
     merged_dict = left_dict.copy()

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright 2016 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -22,6 +22,7 @@ import sys
 import traceback
 
 import buildbot_json_magic_substitutions as magic_substitutions
+from functools import cmp_to_key
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -50,13 +51,17 @@ class BaseGenerator(object):
     raise NotImplementedError()
 
 
+def _cmp(a, b):
+  return (a > b) - (a < b)
+
+
 def cmp_tests(a, b):
   # Prefer to compare based on the "test" key.
-  val = cmp(a['test'], b['test'])
+  val = _cmp(a['test'], b['test'])
   if val != 0:
     return val
   if 'name' in a and 'name' in b:
-    return cmp(a['name'], b['name']) # pragma: no cover
+    return _cmp(a['name'], b['name']) # pragma: no cover
   if 'name' not in a and 'name' not in b:
     return 0 # pragma: no cover
   # Prefer to put variants of the same test after the first one.
@@ -74,7 +79,7 @@ class GPUTelemetryTestGenerator(BaseGenerator):
 
   def generate(self, waterfall, tester_name, tester_config, input_tests):
     isolated_scripts = []
-    for test_name, test_config in sorted(input_tests.iteritems()):
+    for test_name, test_config in sorted(input_tests.items()):
       test = self.bb_gen.generate_gpu_telemetry_test(
           waterfall, tester_name, tester_config, test_name, test_config,
           self._is_android_webview)
@@ -97,7 +102,7 @@ class GTestGenerator(BaseGenerator):
     # key (see gles2_conform_d3d9_test and similar variants). Avoid
     # losing the order by avoiding coalescing the dictionaries into one.
     gtests = []
-    for test_name, test_config in sorted(input_tests.iteritems()):
+    for test_name, test_config in sorted(input_tests.items()):
       # Variants allow more than one definition for a given test, and is defined
       # in array format from resolve_variants().
       if not isinstance(test_config, list):
@@ -112,7 +117,7 @@ class GTestGenerator(BaseGenerator):
     return gtests
 
   def sort(self, tests):
-    return sorted(tests, cmp=cmp_tests)
+    return sorted(tests, key=cmp_to_key(cmp_tests))
 
 
 class IsolatedScriptTestGenerator(BaseGenerator):
@@ -121,7 +126,7 @@ class IsolatedScriptTestGenerator(BaseGenerator):
 
   def generate(self, waterfall, tester_name, tester_config, input_tests):
     isolated_scripts = []
-    for test_name, test_config in sorted(input_tests.iteritems()):
+    for test_name, test_config in sorted(input_tests.items()):
       # Variants allow more than one definition for a given test, and is defined
       # in array format from resolve_variants().
       if not isinstance(test_config, list):
@@ -144,7 +149,7 @@ class ScriptGenerator(BaseGenerator):
 
   def generate(self, waterfall, tester_name, tester_config, input_tests):
     scripts = []
-    for test_name, test_config in sorted(input_tests.iteritems()):
+    for test_name, test_config in sorted(input_tests.items()):
       test = self.bb_gen.generate_script_test(
         waterfall, tester_name, tester_config, test_name, test_config)
       if test:
@@ -161,7 +166,7 @@ class JUnitGenerator(BaseGenerator):
 
   def generate(self, waterfall, tester_name, tester_config, input_tests):
     scripts = []
-    for test_name, test_config in sorted(input_tests.iteritems()):
+    for test_name, test_config in sorted(input_tests.items()):
       test = self.bb_gen.generate_junit_test(
         waterfall, tester_name, tester_config, test_name, test_config)
       if test:
@@ -338,7 +343,7 @@ class BBJSONGenerator(object):
 
   def print_line(self, line):
     # Exists so that tests can mock
-    print line # pragma: no cover
+    print(line) # pragma: no cover
 
   def read_file(self, relative_path):
     with open(self.generate_abs_file_path(relative_path)) as fp:
@@ -523,7 +528,7 @@ class BBJSONGenerator(object):
             # swarming dimension_sets that we have to merge. It will fail
             # to merge / override 'args' arrays which are different
             # length.
-            for idx in xrange(len(b[key])):
+            for idx in range(len(b[key])):
               try:
                 a[key][idx] = self.dictionary_merge(a[key][idx], b[key][idx],
                                                     path + [str(key), str(idx)],
@@ -608,7 +613,7 @@ class BBJSONGenerator(object):
         del swarming_dict['hard_timeout'] # pragma: no cover
     if not swarming_dict.get('can_use_on_swarming_builders', False):
       # Remove all other keys.
-      for k in swarming_dict.keys(): # pragma: no cover
+      for k in list(swarming_dict.keys()): # pragma: no cover
         if k != 'can_use_on_swarming_builders': # pragma: no cover
           del swarming_dict[k] # pragma: no cover
 
@@ -638,12 +643,12 @@ class BBJSONGenerator(object):
     replacements = self.get_test_replacements(
         test, test_name, tester_name) or {}
     valid_replacement_keys = ['args', 'non_precommit_args', 'precommit_args']
-    for key, replacement_dict in replacements.iteritems():
+    for key, replacement_dict in replacements.items():
       if key not in valid_replacement_keys:
         raise BBGenErr(
             'Given replacement key %s for %s on %s is not in the list of valid '
             'keys %s' % (key, test_name, tester_name, valid_replacement_keys))
-      for replacement_key, replacement_val in replacement_dict.iteritems():
+      for replacement_key, replacement_val in replacement_dict.items():
         found_key = False
         for i, test_key in enumerate(test.get(key, [])):
           # Handle both the key/value being replaced being defined as two
@@ -944,7 +949,7 @@ class BBJSONGenerator(object):
     other_suites = self.test_suites.get(other_test_type, {})
     basic_suites = self.test_suites.get('basic_suites', {})
 
-    for suite, suite_def in target_suites.iteritems():
+    for suite, suite_def in target_suites.items():
       if suite in basic_suites:
         raise BBGenErr('%s names may not duplicate basic test suite names '
                        '(error found while processsing %s)'
@@ -969,13 +974,13 @@ class BBJSONGenerator(object):
     new_test_suites = {}
     test_types = ['basic_suites', 'compound_suites', 'matrix_compound_suites']
     for category in test_types:
-      for name, value in self.test_suites.get(category, {}).iteritems():
+      for name, value in self.test_suites.get(category, {}).items():
         new_test_suites[name] = value
     self.test_suites = new_test_suites
 
   def resolve_test_id_prefixes(self):
-    for suite in self.test_suites['basic_suites'].itervalues():
-      for key, test in suite.iteritems():
+    for suite in self.test_suites['basic_suites'].values():
+      for key, test in suite.items():
         assert isinstance(test, dict)
 
         # This assumes the recipe logic which prefers 'test' to 'isolate_name'
@@ -1012,7 +1017,7 @@ class BBJSONGenerator(object):
     # referenced by compound suites exist.
     basic_suites = self.test_suites.get('basic_suites')
 
-    for name, value in compound_suites.iteritems():
+    for name, value in compound_suites.items():
       # Resolve this to a dictionary.
       full_suite = {}
       for entry in value:
@@ -1041,7 +1046,7 @@ class BBJSONGenerator(object):
 
     # Each test in a basic test suite will have a definition per variant.
     test_suite = {}
-    for test_name, test_config in basic_test_definition.iteritems():
+    for test_name, test_config in basic_test_definition.items():
       definitions = []
       for variant in variants:
         # Unpack the variant from variants.pyl if it's string based.
@@ -1096,10 +1101,10 @@ class BBJSONGenerator(object):
     # referenced by matrix suites exist.
     basic_suites = self.test_suites.get('basic_suites')
 
-    for test_name, matrix_config in matrix_compound_suites.iteritems():
+    for test_name, matrix_config in matrix_compound_suites.items():
       full_suite = {}
 
-      for test_suite, mtx_test_suite_config in matrix_config.iteritems():
+      for test_suite, mtx_test_suite_config in matrix_config.items():
         basic_test_def = copy.deepcopy(basic_suites[test_suite])
 
         if 'variants' in mtx_test_suite_config:
@@ -1112,8 +1117,8 @@ class BBJSONGenerator(object):
 
   def link_waterfalls_to_test_suites(self):
     for waterfall in self.waterfalls:
-      for tester_name, tester in waterfall['machines'].iteritems():
-        for suite, value in tester.get('test_suites', {}).iteritems():
+      for tester_name, tester in waterfall['machines'].items():
+        for suite, value in tester.get('test_suites', {}).items():
           if not value in self.test_suites:
             # Hard / impossible to cover this in the unit test.
             raise self.unknown_test_suite(
@@ -1292,7 +1297,7 @@ class BBJSONGenerator(object):
     return {
       name: self.get_tests_for_config(waterfall, name, config)
         for name, config
-        in waterfall['machines'].iteritems()
+        in waterfall['machines'].items()
     }
 
   def get_tests_for_config(self, waterfall, name, config):
@@ -1305,7 +1310,7 @@ class BBJSONGenerator(object):
     if 'additional_compile_targets' in config:
       tests['additional_compile_targets'] = config[
         'additional_compile_targets']
-    for test_type, input_tests in config.get('test_suites', {}).iteritems():
+    for test_type, input_tests in config.get('test_suites', {}).items():
       if test_type not in generator_map:
         raise self.unknown_test_suite_type(
           test_type, name, waterfall['name']) # pragma: no cover
@@ -1348,7 +1353,7 @@ class BBJSONGenerator(object):
       result[waterfall['name']] = all_tests
 
     # Add do not edit warning
-    for tests in result.values():
+    for tests in list(result.values()):
       tests['AAAAA1 AUTOGENERATED FILE DO NOT EDIT'] = {}
       tests['AAAAA2 See generate_buildbot_json.py to make changes'] = {}
 
@@ -1359,7 +1364,7 @@ class BBJSONGenerator(object):
     if self.args.new_files:
       suffix = '.new' + suffix
 
-    for filename, contents in result.items():
+    for filename, contents in list(result.items()):
       jsonstr = self.jsonify(contents)
       self.write_file(self.pyl_file_path(filename + suffix), jsonstr)
 
@@ -1496,8 +1501,8 @@ class BBJSONGenerator(object):
     suites_seen = set()
     generator_map = self.get_test_generator_map()
     for waterfall in self.waterfalls:
-      for bot_name, tester in waterfall['machines'].iteritems():
-        for suite_type, suite in tester.get('test_suites', {}).iteritems():
+      for bot_name, tester in waterfall['machines'].items():
+        for suite_type, suite in tester.get('test_suites', {}).items():
           if suite_type not in generator_map:
             raise self.unknown_test_suite_type(suite_type, bot_name,
                                                waterfall['name'])
@@ -1522,17 +1527,17 @@ class BBJSONGenerator(object):
     all_bots = set()
     missing_bots = set()
     for waterfall in self.waterfalls:
-      for bot_name, tester in waterfall['machines'].iteritems():
+      for bot_name, tester in waterfall['machines'].items():
         all_bots.add(bot_name)
         # In order to disambiguate between bots with the same name on
         # different waterfalls, support has been added to various
         # exceptions for concatenating the waterfall name after the bot
         # name.
         all_bots.add(bot_name + ' ' + waterfall['name'])
-    for exception in self.exceptions.itervalues():
+    for exception in self.exceptions.values():
       removals = (exception.get('remove_from', []) +
                   exception.get('remove_gtest_from', []) +
-                  exception.get('modifications', {}).keys())
+                  list(exception.get('modifications', {}).keys()))
       for removal in removals:
         if removal not in all_bots:
           missing_bots.add(removal)
@@ -1546,15 +1551,15 @@ class BBJSONGenerator(object):
     seen_mixins = set()
     for waterfall in self.waterfalls:
       seen_mixins = seen_mixins.union(waterfall.get('mixins', set()))
-      for bot_name, tester in waterfall['machines'].iteritems():
+      for bot_name, tester in waterfall['machines'].items():
         seen_mixins = seen_mixins.union(tester.get('mixins', set()))
-    for suite in self.test_suites.values():
+    for suite in list(self.test_suites.values()):
       if isinstance(suite, list):
         # Don't care about this, it's a composition, which shouldn't include a
         # swarming mixin.
         continue
 
-      for test in suite.values():
+      for test in list(suite.values()):
         assert isinstance(test, dict)
         seen_mixins = seen_mixins.union(test.get('mixins', set()))
 
@@ -1566,11 +1571,11 @@ class BBJSONGenerator(object):
 
     # All variant references must be referenced
     seen_variants = set()
-    for suite in self.test_suites.values():
+    for suite in list(self.test_suites.values()):
       if isinstance(suite, list):
         continue
 
-      for test in suite.values():
+      for test in list(suite.values()):
         if isinstance(test, dict):
           for variant in test.get('variants', []):
             if isinstance(variant, str):
@@ -1821,7 +1826,7 @@ class BBJSONGenerator(object):
     # by this script already.
     self.resolve_configuration_files()
     ungenerated_files = set()
-    for filename, expected_contents in self.generate_outputs().items():
+    for filename, expected_contents in list(self.generate_outputs().items()):
       expected = self.jsonify(expected_contents)
       file_path = filename + '.json'
       current = self.read_file(self.pyl_file_path(file_path))
@@ -1957,7 +1962,7 @@ class BBJSONGenerator(object):
     Returns a list of tests not grouped by test category
     for a specific bot.
     """
-    TEST_CATS = self.get_test_generator_map().keys()
+    TEST_CATS = list(self.get_test_generator_map().keys())
     tests = []
     for test_cat in TEST_CATS:
       if not test_cat in bot_info:
@@ -1973,7 +1978,7 @@ class BBJSONGenerator(object):
     configuration, not grouped by their test suite.
     """
     tests = {}
-    for test_suite in test_suites.itervalues():
+    for test_suite in test_suites.values():
       for test in test_suite:
         test_info = test_suite[test]
         test_name = test

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright 2015 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -255,7 +255,7 @@ def process_file(mode, test_name, tests_location, filepath, ninja_targets,
   except ValueError as e:
     raise Error('Exception raised while checking %s: %s' % (filepath, e))
 
-  for builder, data in sorted(config.iteritems()):
+  for builder, data in sorted(config.items()):
     if builder in SKIP:
       # Oddities.
       continue
@@ -363,7 +363,7 @@ def print_convert(test_name, tests_location):
   print('')
   print('%d configs already ran on Swarming' % data['count_run_on_swarming'])
   print('%d used to run locally and were converted:' % data['count_run_local'])
-  for master, builders in sorted(data['local_configs'].iteritems()):
+  for master, builders in sorted(data['local_configs'].items()):
     for builder in builders:
       print('- %s: %s' % (master, builder))
   print('')
@@ -382,20 +382,20 @@ def print_remaining(test_name, tests_location):
     if test_name not in tests_location:
       raise Error('Unknown test %s' % test_name)
     for config, builders in sorted(
-        tests_location[test_name]['local_configs'].iteritems()):
+        tests_location[test_name]['local_configs'].items()):
       print('%s:' % config)
       for builder in sorted(builders):
         print('  %s' % builder)
     return
 
   isolates = get_isolates()
-  l = max(map(len, tests_location))
+  l = max(list(map(len, tests_location)))
   print('%-*s%sLocal       %sSwarming  %sMissing isolate' %
       (l, 'Test', colorama.Fore.RED, colorama.Fore.GREEN,
         colorama.Fore.MAGENTA))
   total_local = 0
   total_swarming = 0
-  for name, location in sorted(tests_location.iteritems()):
+  for name, location in sorted(tests_location.items()):
     if not location['count_run_on_swarming']:
       c = colorama.Fore.RED
     elif location['count_run_local']:
@@ -456,7 +456,7 @@ def main():
 
   with open(os.path.join(THIS_DIR, "gn_isolate_map.pyl")) as fp:
     gn_isolate_map = ast.literal_eval(fp.read())
-    ninja_targets = {k: v['label'] for k, v in gn_isolate_map.items()}
+    ninja_targets = {k: v['label'] for k, v in list(gn_isolate_map.items())}
 
   try:
     result = 0
@@ -466,7 +466,7 @@ def main():
                           ninja_targets, ninja_targets_seen):
         result = 1
 
-    skip_targets = [k for k, v in gn_isolate_map.items() if
+    skip_targets = [k for k, v in list(gn_isolate_map.items()) if
                     ('skip_usage_check' in v and v['skip_usage_check'])]
     extra_targets = (set(ninja_targets) - set(skip_targets) -
                      ninja_targets_seen - SKIP_GN_ISOLATE_MAP_TARGETS)

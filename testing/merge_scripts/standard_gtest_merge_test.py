@@ -1,9 +1,9 @@
-#!/usr/bin/env vpython
+#!/usr/bin/env vpython3
 # Copyright 2014 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import cStringIO
+import io
 import json
 import logging
 import os
@@ -200,11 +200,11 @@ GOOD_GTEST_JSON_MERGED = {
     }],
   }],
   'swarming_summary': {
-    u'shards': [
+    'shards': [
       {
-        u'state': u'COMPLETED',
-        u'outputs_ref': {
-          u'view_url': u'blah',
+        'state': 'COMPLETED',
+        'outputs_ref': {
+          'view_url': 'blah',
         },
       }
       ],
@@ -326,12 +326,12 @@ TIMED_OUT_GTEST_JSON_MERGED = {
     }],
   }],
   'swarming_summary': {
-    u'shards': [
+    'shards': [
       {
-        u'state': u'COMPLETED',
+        'state': 'COMPLETED',
       },
       {
-        u'state': u'TIMED_OUT',
+        'state': 'TIMED_OUT',
       },
       ],
   },
@@ -381,7 +381,7 @@ class LoadShardJsonTest(_StandardGtestMergeTest):
 
   def test_double_digit_jsons(self):
     jsons_to_merge = []
-    for i in xrange(15):
+    for i in range(15):
       json_dir = os.path.join(self.temp_dir, str(i))
       json_path = os.path.join(json_dir, 'output.json')
       if not os.path.exists(json_dir):
@@ -402,7 +402,7 @@ class LoadShardJsonTest(_StandardGtestMergeTest):
 
   def test_double_task_id_jsons(self):
     jsons_to_merge = []
-    for i in xrange(15):
+    for i in range(15):
       json_dir = os.path.join(self.temp_dir, 'deadbeef%d' % i)
       json_path = os.path.join(json_dir, 'output.json')
       if not os.path.exists(json_dir):
@@ -434,12 +434,12 @@ class MergeShardResultsTest(_StandardGtestMergeTest):
 
   def stage(self, summary, files):
     self.summary = self._write_temp_file('summary.json', summary)
-    for path, content in files.iteritems():
+    for path, content in files.items():
       abs_path = self._write_temp_file(path, content)
       self.test_files.append(abs_path)
 
   def call(self):
-    stdout = cStringIO.StringIO()
+    stdout = io.StringIO()
     with mock.patch('sys.stdout', stdout):
       merged = standard_gtest_merge.merge_shard_results(
           self.summary, self.test_files)
@@ -448,27 +448,27 @@ class MergeShardResultsTest(_StandardGtestMergeTest):
   def assertUnicodeEquals(self, expectation, result):
     def convert_to_unicode(key_or_value):
       if isinstance(key_or_value, str):
-        return unicode(key_or_value)
+        return str(key_or_value)
       if isinstance(key_or_value, dict):
         return {convert_to_unicode(k): convert_to_unicode(v)
-                for k, v in key_or_value.items()}
+                for k, v in list(key_or_value.items())}
       if isinstance(key_or_value, list):
         return [convert_to_unicode(x) for x in key_or_value]
       return key_or_value
 
     unicode_expectations = convert_to_unicode(expectation)
     unicode_result = convert_to_unicode(result)
-    self.assertEquals(unicode_expectations, unicode_result)
+    self.assertEqual(unicode_expectations, unicode_result)
 
   def test_ok(self):
     # Two shards, both successfully finished.
     self.stage({
-      u'shards': [
+      'shards': [
         {
-          u'state': u'COMPLETED',
+          'state': 'COMPLETED',
         },
         {
-          u'state': u'COMPLETED',
+          'state': 'COMPLETED',
         },
       ],
     },
@@ -480,9 +480,9 @@ class MergeShardResultsTest(_StandardGtestMergeTest):
     merged['swarming_summary'] = {
       'shards': [
         {
-          u'state': u'COMPLETED',
-          u'outputs_ref': {
-            u'view_url': u'blah',
+          'state': 'COMPLETED',
+          'outputs_ref': {
+            'view_url': 'blah',
           },
         }
       ],
@@ -523,15 +523,15 @@ class MergeShardResultsTest(_StandardGtestMergeTest):
   def test_unfinished_shards(self):
     # Only one shard (#1) finished. Shard #0 did not.
     self.stage({
-      u'shards': [
+      'shards': [
         None,
         {
-          u'state': u'COMPLETED',
+          'state': 'COMPLETED',
         },
       ],
     },
     {
-      u'1/output.json': GOOD_GTEST_JSON_1,
+      '1/output.json': GOOD_GTEST_JSON_1,
     })
     merged, stdout = self.call()
     merged.pop('swarming_summary')
@@ -545,17 +545,17 @@ class MergeShardResultsTest(_StandardGtestMergeTest):
   def test_missing_output_json(self):
     # Shard #0 output json is missing.
     self.stage({
-      u'shards': [
+      'shards': [
         {
-          u'state': u'COMPLETED',
+          'state': 'COMPLETED',
         },
         {
-          u'state': u'COMPLETED',
+          'state': 'COMPLETED',
         },
       ],
     },
     {
-      u'1/output.json': GOOD_GTEST_JSON_1,
+      '1/output.json': GOOD_GTEST_JSON_1,
     })
     merged, stdout = self.call()
     merged.pop('swarming_summary')
@@ -567,12 +567,12 @@ class MergeShardResultsTest(_StandardGtestMergeTest):
   def test_large_output_json(self):
     # a shard is too large.
     self.stage({
-      u'shards': [
+      'shards': [
         {
-          u'state': u'COMPLETED',
+          'state': 'COMPLETED',
         },
         {
-          u'state': u'COMPLETED',
+          'state': 'COMPLETED',
         },
       ],
     },

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright 2015 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -97,7 +97,7 @@ def get_device_info(args, failures):
     'build_types': unique_build_details(2),
   }
 
-  for k, v in parsed_details.iteritems():
+  for k, v in parsed_details.items():
     if len(v) == 1:
       results[k] = v[0]
     else:

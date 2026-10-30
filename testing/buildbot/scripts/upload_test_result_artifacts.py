@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright 2017 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -25,7 +25,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
-import urlparse
+import urllib.parse
 import uuid
 
 root_dir = os.path.abspath(
@@ -82,11 +82,11 @@ def get_tests(test_trie):
 
   tests = {}
 
-  for k, v in test_trie.items():
+  for k, v in list(test_trie.items()):
     if 'expected' in v and 'actual' in v:
       tests[(k,)] = v
     else:
-      for key, val in get_tests(v).items():
+      for key, val in list(get_tests(v).items()):
         tests[(k,) + key] = val
 
   return tests
@@ -94,7 +94,7 @@ def get_tests(test_trie):
 
 def upload_directory_to_gs(local_path, bucket, gs_path, dry_run):
   if dry_run:
-    print 'would have uploaded %s to %s' % (local_path, gs_path)
+    print('would have uploaded %s to %s' % (local_path, gs_path))
     return
 
   # -m does multithreaded uploads, which is needed because we upload multiple
@@ -108,7 +108,7 @@ def hash_artifacts(tests, artifact_root):
   # Sort for testing consistency.
   for test_obj in sorted(tests.values()):
     for name, location in sorted(
-        test_obj.get('artifacts', {}).items(),
+        list(test_obj.get('artifacts', {}).items()),
         key=lambda pair: pair[0]):
       absolute_filepath = os.path.join(artifact_root, location)
       file_digest = get_file_digest(absolute_filepath)
@@ -152,7 +152,7 @@ def upload_artifacts(data, artifact_root, dry_run, bucket):
   tests = get_tests(local_data['tests'])
   # Do a validation pass first. Makes sure no filesystem operations occur if
   # there are invalid artifacts.
-  for test_obj in tests.values():
+  for test_obj in list(tests.values()):
     for artifact_name in test_obj.get('artifacts', {}):
       if artifact_name not in type_info:
         raise ValueError(
@@ -204,8 +204,8 @@ def main():
 
   type_info = data.get('artifact_type_info')
   if not type_info:
-    print 'File %r did not have %r top level key. Not processing.' % (
-        args.test_result_file, 'artifact_type_info')
+    print('File %r did not have %r top level key. Not processing.' % (
+        args.test_result_file, 'artifact_type_info'))
     return 1
 
   new_data = upload_artifacts(
@@ -215,8 +215,8 @@ def main():
       json.dump(new_data, f)
 
   if new_data and not args.quiet:
-    print json.dumps(
-        new_data, indent=2, separators=(',', ': '), sort_keys=True)
+    print(json.dumps(
+        new_data, indent=2, separators=(',', ': '), sort_keys=True))
   return 0
 
 if __name__ == '__main__':

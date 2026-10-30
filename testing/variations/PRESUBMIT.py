@@ -77,7 +77,7 @@ def PrettyPrint(contents):
                                                ('experiments', [])])
       for experiment in experiment_config['experiments']:
         ordered_experiment = OrderedDict()
-        for index in xrange(0, 10):
+        for index in range(0, 10):
           comment_key = '//' + str(index)
           if comment_key in experiment:
             ordered_experiment[comment_key] = experiment[comment_key]
@@ -86,7 +86,7 @@ def PrettyPrint(contents):
           ordered_experiment['forcing_flag'] = experiment['forcing_flag']
         if 'params' in experiment:
           ordered_experiment['params'] = OrderedDict(
-              sorted(experiment['params'].items(), key=lambda t: t[0]))
+              sorted(list(experiment['params'].items()), key=lambda t: t[0]))
         if 'enable_features' in experiment:
           ordered_experiment['enable_features'] = \
               sorted(experiment['enable_features'])
@@ -127,7 +127,7 @@ def ValidateData(input_api, json_data, file_path, message_type):
 
   if not isinstance(json_data, dict):
     return _CreateMessage('Expecting dict')
-  for (study, experiment_configs) in json_data.iteritems():
+  for (study, experiment_configs) in json_data.items():
     warnings = _ValidateEntry(study, experiment_configs, _CreateMessage)
     if warnings:
       return warnings
@@ -137,7 +137,7 @@ def ValidateData(input_api, json_data, file_path, message_type):
 
 def _ValidateEntry(study, experiment_configs, create_message_fn):
   """Validates one entry of the field trial configuration."""
-  if not isinstance(study, unicode):
+  if not isinstance(study, str):
     return create_message_fn('Expecting keys to be string, got %s', type(study))
   if not isinstance(experiment_configs, list):
     return create_message_fn('Expecting list for study %s', study)
@@ -185,7 +185,7 @@ def _ValidateExperimentConfig(experiment_config, create_message_fn):
 def _ValidateExperimentGroup(experiment_group, create_message_fn):
   """Validates one group of one config in a configuration entry."""
   name = experiment_group.get('name', '')
-  if not name or not isinstance(name, unicode):
+  if not name or not isinstance(name, str):
     return create_message_fn('Missing valid name for experiment')
 
   # Add context to other messages.
@@ -197,10 +197,10 @@ def _ValidateExperimentGroup(experiment_group, create_message_fn):
     params = experiment_group['params']
     if not isinstance(params, dict):
       return _CreateGroupMessage('Expected dict for params')
-    for (key, value) in params.iteritems():
-      if not isinstance(key, unicode) or not isinstance(value, unicode):
+    for (key, value) in params.items():
+      if not isinstance(key, str) or not isinstance(value, str):
         return _CreateGroupMessage('Invalid param (%s: %s)', key, value)
-  for key in experiment_group.keys():
+  for key in list(experiment_group.keys()):
     if key not in VALID_EXPERIMENT_KEYS:
       return _CreateGroupMessage('Key[%s] is not a valid key', key)
   return []

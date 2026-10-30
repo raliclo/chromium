@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright 2017 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -53,7 +53,7 @@ import os
 import subprocess
 import sys
 import tempfile
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import logging
 
 import base_test_triggerer
@@ -112,7 +112,7 @@ class PerfDeviceTriggerer(base_test_triggerer.BaseTestTriggerer):
       self._bot_configs = []
       # For each eligible bot, append the dimension
       # to the eligible bot_configs
-      for  _, bot in self._eligible_bots_by_ids.iteritems():
+      for  _, bot in self._eligible_bots_by_ids.items():
         self._bot_configs.append(bot.as_json_config())
 
   def select_config_indices(self, args, verbose):
@@ -153,12 +153,12 @@ class PerfDeviceTriggerer(base_test_triggerer.BaseTestTriggerer):
     existing_shard_bot_to_shard_map = copy.deepcopy(shard_to_bot_assignment_map)
     # Now create sets of remaining healthy and bad bots
     unallocated_healthy_bots = {
-        b for b in unallocated_bots_by_ids.values() if b.is_alive()}
+        b for b in list(unallocated_bots_by_ids.values()) if b.is_alive()}
     unallocated_bad_bots = {
-        b for b in unallocated_bots_by_ids.values() if not b.is_alive()}
+        b for b in list(unallocated_bots_by_ids.values()) if not b.is_alive()}
 
     # Try assigning healthy bots for new shards first.
-    for shard_index, bot in sorted(shard_to_bot_assignment_map.iteritems()):
+    for shard_index, bot in sorted(shard_to_bot_assignment_map.items()):
       if not bot and unallocated_healthy_bots:
         shard_to_bot_assignment_map[shard_index] = \
             unallocated_healthy_bots.pop()
@@ -168,7 +168,7 @@ class PerfDeviceTriggerer(base_test_triggerer.BaseTestTriggerer):
         shard_to_bot_assignment_map[shard_index] = unallocated_bad_bots.pop()
 
     # Handle the rest of shards that were assigned dead bots:
-    for shard_index, bot in sorted(shard_to_bot_assignment_map.iteritems()):
+    for shard_index, bot in sorted(shard_to_bot_assignment_map.items()):
       if not bot.is_alive() and unallocated_healthy_bots:
         dead_bot = bot
         healthy_bot = unallocated_healthy_bots.pop()
@@ -194,7 +194,7 @@ class PerfDeviceTriggerer(base_test_triggerer.BaseTestTriggerer):
   def _print_device_affinity_info(
       self, new_map, existing_map, health_map, num_shards):
     print()
-    for shard_index in xrange(num_shards):
+    for shard_index in range(num_shards):
       existing = existing_map.get(shard_index, None)
       new = new_map.get(shard_index, None)
       existing_id = ''
@@ -208,7 +208,7 @@ class PerfDeviceTriggerer(base_test_triggerer.BaseTestTriggerer):
 
     healthy_bots = []
     dead_bots = []
-    for _, b in health_map.iteritems():
+    for _, b in health_map.items():
       if b.is_alive():
         healthy_bots.append(b.id())
       else:
@@ -229,7 +229,7 @@ class PerfDeviceTriggerer(base_test_triggerer.BaseTestTriggerer):
       of the bots.
     """
     values = []
-    for key, value in sorted(dimensions.iteritems()):
+    for key, value in sorted(dimensions.items()):
       values.append(('dimensions', '%s:%s' % (key, value)))
 
     query_result = self.query_swarming(
@@ -255,7 +255,7 @@ class PerfDeviceTriggerer(base_test_triggerer.BaseTestTriggerer):
     # Example: swarming.py query -S server-url.com --limit 1 \\
     #  'tasks/list?tags=os:Windows&tags=pool:chrome.tests.perf&tags=shard:12'
     values = [
-      ('tags', '%s:%s' % (k, v)) for k, v in self._dimensions.iteritems()
+      ('tags', '%s:%s' % (k, v)) for k, v in self._dimensions.items()
     ]
     # Append the shard as a tag
     values.append(('tags', '%s:%s' % ('shard', str(shard_index))))
@@ -283,13 +283,13 @@ class PerfDeviceTriggerer(base_test_triggerer.BaseTestTriggerer):
 
   def _get_swarming_dimensions(self, args):
     dimensions = {}
-    for i in xrange(len(args) - 2):
+    for i in range(len(args) - 2):
       if args[i] == '--dimension':
         dimensions[args[i+1]] = args[i+2]
     return dimensions
 
   def _get_swarming_server(self, args):
-    for i in xrange(len(args)):
+    for i in range(len(args)):
       if '--swarming' in args[i]:
         server = args[i+1]
         slashes_index = server.index('//') + 2

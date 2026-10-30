@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright (c) 2012 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -44,13 +44,12 @@ def kill(proc, name, timeout_in_seconds=10):
 
   thread.join(timeout_in_seconds)
   if thread.is_alive():
-    print >> sys.stderr, '%s running after SIGTERM, trying SIGKILL.' % name
+    print('%s running after SIGTERM, trying SIGKILL.' % name, file=sys.stderr)
     proc.kill()
 
   thread.join(timeout_in_seconds)
   if thread.is_alive():
-    print >> sys.stderr, \
-      '%s running after SIGTERM and SIGKILL; good luck!' % name
+    print('%s running after SIGTERM and SIGKILL; good luck!' % name, file=sys.stderr)
 
 
 def launch_dbus(env):
@@ -83,7 +82,7 @@ def launch_dbus(env):
         env[m.group(1)] = m.group(2)
     return int(env['DBUS_SESSION_BUS_PID'])
   except (subprocess.CalledProcessError, OSError, KeyError, ValueError) as e:
-    print 'Exception while running dbus_launch: %s' % e
+    print('Exception while running dbus_launch: %s' % e)
 
 
 # TODO(crbug.com/949194): Encourage setting flags to False.
@@ -128,7 +127,7 @@ def run_executable(
   use_weston = False
   if '--use-weston' in cmd:
     if use_xvfb:
-      print >> sys.stderr, 'Unable to use Weston with xvfb.'
+      print('Unable to use Weston with xvfb.', file=sys.stderr)
       return 1
     use_weston = True
     cmd.remove('--use-weston')
@@ -212,7 +211,7 @@ def _run_with_xvfb(cmd, env, stdoutfile, use_openbox, use_xcompmgr):
       # been terminated. In that case, it's safe to read the return value.
       if wait_for_openbox:
         xwmstartupcheck_proc.wait()
-        if xwmstartupcheck_proc.returncode is not 0:
+        if xwmstartupcheck_proc.returncode != 0:
           raise _XvfbProcessError('Failed to get OpenBox up.')
 
     if use_xcompmgr:
@@ -221,10 +220,10 @@ def _run_with_xvfb(cmd, env, stdoutfile, use_openbox, use_xcompmgr):
 
     return test_env.run_executable(cmd, env, stdoutfile)
   except OSError as e:
-    print >> sys.stderr, 'Failed to start Xvfb or Openbox: %s' % str(e)
+    print('Failed to start Xvfb or Openbox: %s' % str(e), file=sys.stderr)
     return 1
   except _XvfbProcessError as e:
-    print >> sys.stderr, 'Xvfb fail: %s' % str(e)
+    print('Xvfb fail: %s' % str(e), file=sys.stderr)
     return 1
   finally:
     kill(openbox_proc, 'openbox')
@@ -282,10 +281,10 @@ def _run_with_weston(cmd, env, stdoutfile):
     env['WAYLAND_DISPLAY'] = weston_proc_display
     return test_env.run_executable(cmd, env, stdoutfile)
   except OSError as e:
-    print >> sys.stderr, 'Failed to start Weston: %s' % str(e)
+    print('Failed to start Weston: %s' % str(e), file=sys.stderr)
     return 1
   except _WestonProcessError as e:
-    print >> sys.stderr, 'Weston fail: %s' % str(e)
+    print('Weston fail: %s' % str(e), file=sys.stderr)
     return 1
   finally:
     kill(weston_proc, 'weston')
@@ -383,22 +382,22 @@ def _set_xdg_runtime_dir(env):
   if not runtime_dir:
     runtime_dir = '/tmp/xdg-tmp-dir/'
     if not os.path.exists(runtime_dir):
-      os.makedirs(runtime_dir, 0700)
+      os.makedirs(runtime_dir, 0o700)
     env['XDG_RUNTIME_DIR'] = runtime_dir
 
 
 def main():
   usage = 'Usage: xvfb.py [command [--no-xvfb or --use-weston] args...]'
   if len(sys.argv) < 2:
-    print >> sys.stderr, usage
+    print(usage, file=sys.stderr)
     return 2
 
   # If the user still thinks the first argument is the execution directory then
   # print a friendly error message and quit.
   if os.path.isdir(sys.argv[1]):
-    print >> sys.stderr, (
-        'Invalid command: \"%s\" is a directory' % sys.argv[1])
-    print >> sys.stderr, usage
+    print((
+        'Invalid command: \"%s\" is a directory' % sys.argv[1]), file=sys.stderr)
+    print(usage, file=sys.stderr)
     return 3
 
   return run_executable(sys.argv[1:], os.environ.copy())

@@ -133,7 +133,8 @@ class BaseWptScriptAdapter(common.BaseIsolatedScriptArgsAdapter):
         # UnicodeDecodeErrors when writing to file. This can happen if
         # the diff contains unicode characters but the file is written
         # as ascii because of the default system-level encoding.
-        html_diff_content = unicode(html_diff_content, 'utf-8')
+        if isinstance(html_diff_content, bytes):
+          html_diff_content = html_diff_content.decode('utf-8')
         html_diff_subpath = self._write_text_artifact(
             test_failures.FILENAME_SUFFIX_HTML_DIFF, results_dir,
             path_so_far, html_diff_content, extension=".html")
@@ -167,7 +168,7 @@ class BaseWptScriptAdapter(common.BaseIsolatedScriptArgsAdapter):
             if screenshot_artifact:
                 screenshot_paths_dict = self._write_screenshot_artifact(
                     results_dir, path_so_far, screenshot_artifact)
-                for screenshot_key, path in screenshot_paths_dict.items():
+                for screenshot_key, path in list(screenshot_paths_dict.items()):
                     root_node["artifacts"][screenshot_key] = [path]
 
             crashlog_artifact = root_node["artifacts"].pop("wpt_crash_log",
