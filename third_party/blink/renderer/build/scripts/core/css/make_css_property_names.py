@@ -52,7 +52,7 @@ class CSSPropertyNamesWriter(json5_generator.Writer):
             'property_id_bit_length':
             self._css_properties.property_id_bit_length,
             'max_name_length':
-            max(map(len, self._css_properties.properties_by_id)),
+            max(list(map(len, self._css_properties.properties_by_id))),
         }
 
     @gperf.use_jinja_gperf_template(

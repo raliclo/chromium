@@ -5,6 +5,7 @@
 import multiprocessing
 
 from .package_initializer import package_initializer
+from functools import reduce
 
 
 class TaskQueue(object):
@@ -64,7 +65,7 @@ class TaskQueue(object):
         for index, task in enumerate(self._requested_tasks):
             func, args, kwargs = task
             report_progress(len(self._requested_tasks), index)
-            apply(func, args, kwargs)
+            func(*args, **kwargs)
         report_progress(len(self._requested_tasks), len(self._requested_tasks))
 
     def _run_in_parallel(self, report_progress):

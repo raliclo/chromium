@@ -93,7 +93,7 @@ def main():
     # Since we're passing the input file on stdin, remove it from the args.
     gperf_args.remove(infile)
 
-    open(args.output_file, 'wb').write(
+    open(args.output_file, 'w').write(
         generate_gperf(gperf_path,
                        open(infile).read(), gperf_args))
 

@@ -89,7 +89,7 @@ def AddCommandLineFlags(parser):
 
 
 def CheckExpectations(actual_data, options):
-  with build_utils.AtomicOutput(options.actual_file) as f:
+  with build_utils.AtomicOutput(options.actual_file, mode='w') as f:
     f.write(actual_data)
   if options.expected_file_base:
     actual_data = _GenerateDiffWithOnlyAdditons(options.expected_file_base,

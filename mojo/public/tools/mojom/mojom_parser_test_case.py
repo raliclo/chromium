@@ -56,7 +56,7 @@ class MojomParserTestCase(unittest.TestCase):
     args = [
         '--input-root', self._temp_dir, '--input-root', out_dir,
         '--output-root', out_dir, '--mojoms'
-    ] + list(map(lambda mojom: os.path.join(self._temp_dir, mojom), mojoms))
+    ] + list([os.path.join(self._temp_dir, mojom) for mojom in mojoms])
     if metadata:
       args.extend(['--check-imports', self.GetPath(metadata)])
     mojom_parser.Run(args)

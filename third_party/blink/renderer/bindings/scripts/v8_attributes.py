@@ -110,9 +110,7 @@ def attribute_context(interface, attribute, interfaces, component_info):
     # [ReflectOnly]
     reflect_only = extended_attribute_value_as_list(attribute, 'ReflectOnly')
     if reflect_only:
-        reflect_only = map(
-            lambda v: cpp_content_attribute_value_name(interface, v),
-            reflect_only)
+        reflect_only = [cpp_content_attribute_value_name(interface, v) for v in reflect_only]
     if is_custom_element_callbacks or is_reflect:
         includes.add('core/html/custom/v0_custom_element_processing_stack.h')
     # [PerWorldBindings]

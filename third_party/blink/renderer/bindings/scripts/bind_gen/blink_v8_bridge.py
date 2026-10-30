@@ -500,7 +500,7 @@ def make_v8_to_blink_value(blink_var_name,
     assert isinstance(blink_var_name, str)
     assert isinstance(v8_value_expr, str)
     assert isinstance(idl_type, web_idl.IdlType)
-    assert (argument_index is None or isinstance(argument_index, (int, long)))
+    assert (argument_index is None or isinstance(argument_index, int))
     assert (default_value is None
             or isinstance(default_value, web_idl.LiteralConstant))
 
@@ -620,7 +620,7 @@ def make_v8_to_blink_value_variadic(blink_var_name, v8_array,
     """
     assert isinstance(blink_var_name, str)
     assert isinstance(v8_array, str)
-    assert isinstance(v8_array_start_index, (int, long))
+    assert isinstance(v8_array_start_index, int)
     assert isinstance(idl_type, web_idl.IdlType)
 
     pattern = ("auto&& ${{{_1}}} = "

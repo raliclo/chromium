@@ -123,8 +123,8 @@ def main():
 
   returncode, errors = compiler.Compiler().run_jar(args.compiler, compiler_args)
   if returncode != 0:
-    print args.compiler, ' '.join(compiler_args)
-    print errors
+    print(args.compiler, ' '.join(compiler_args))
+    print(errors)
 
   return returncode
 

@@ -16,22 +16,22 @@ USAGE = ('Usage:\n'
 
 def main(argv):
   if len(argv) != 3:
-    print >> sys.stderr, ('Error: You must pass the following arguments:\n'
+    print(('Error: You must pass the following arguments:\n'
                           ' * arm2gnu_script_path\n'
                           ' * input_file\n'
-                          ' * output_file')
-    print USAGE
+                          ' * output_file'), file=sys.stderr)
+    print(USAGE)
     return 1
 
   arm2gnu_script = os.path.abspath(argv[0])
   if not os.path.exists(arm2gnu_script):
-    print >> sys.stderr, ('Error: Cannot find arm2gnu.pl script at: %s.' %
-                          arm2gnu_script)
+    print(('Error: Cannot find arm2gnu.pl script at: %s.' %
+                          arm2gnu_script), file=sys.stderr)
     return 2
 
   input_file = os.path.abspath(argv[1])
   if not os.path.exists(input_file):
-    print >> sys.stderr, 'Error: Cannot find input file at: %s.' % input_file
+    print('Error: Cannot find input file at: %s.' % input_file, file=sys.stderr)
     return 3
 
   output_file = argv[2]

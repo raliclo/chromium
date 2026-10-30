@@ -96,10 +96,10 @@ def produce_partition_rule(config_file, css_ranking_api):
     css_ranking_dictionary = dict(
         [(x["property_name"], x["day_percentage"] * 100) for x in css_ranking])
     css_ranking_cdf = dict(
-        zip([x["property_name"] for x in css_ranking], [
+        list(zip([x["property_name"] for x in css_ranking], [
             float(i) / total_css_properties
             for i in range(total_css_properties)
-        ]))
+        ])))
     css_properties = json5_generator.Json5File.load_from_files(
         [CSS_PROPERTIES]).name_dictionaries
 

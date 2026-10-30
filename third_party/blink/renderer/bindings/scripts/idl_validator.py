@@ -103,7 +103,7 @@ def read_extended_attributes_file():
                 line = line.strip()
                 if not line or line.startswith('#'):
                     continue
-                name, _, values_string = map(str.strip, line.partition('='))
+                name, _, values_string = list(map(str.strip, line.partition('=')))
                 value_list = [
                     value.strip() for value in values_string.split('|')
                 ]

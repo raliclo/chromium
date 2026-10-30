@@ -125,7 +125,7 @@ def make_content_type_enum_class_def(cg_context):
 
     return ListNode([
         TextNode("enum class ContentType {"),
-        ListNode(map(TextNode, entries), separator=", "),
+        ListNode(list(map(TextNode, entries)), separator=", "),
         TextNode("};"),
     ])
 
@@ -165,7 +165,7 @@ def make_member_vars_def(cg_context):
         "{} {};".format(member.member_type.member_t, member.member_var)
         for member in cg_context.union_members if not member.is_null
     ]
-    return ListNode(map(TextNode, entries))
+    return ListNode(list(map(TextNode, entries)))
 
 
 def generate_union(union_identifier):
@@ -182,9 +182,8 @@ def generate_union(union_identifier):
     # Class names
     class_name = blink_class_name(union)
 
-    union_members = map(
-        lambda member_type: _UnionMemberImpl(union=union, idl_type=member_type
-                                             ), union.flattened_member_types)
+    union_members = [_UnionMemberImpl(union=union, idl_type=member_type
+                                             ) for member_type in union.flattened_member_types]
     if union.does_include_nullable_type:
         union_members.append(_UnionMemberImpl(union=union, idl_type=None))
     cg_context = CodeGenContext(union=union,

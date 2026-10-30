@@ -23,7 +23,7 @@ def sort_keyword_properties_by_canonical_order(
         default_parameters=json5_file_parameters).name_dictionaries
     css_values_dictionary = [x['name'].original for x in css_values_dictionary]
     name_to_position_dictionary = dict(
-        zip(css_values_dictionary, range(len(css_values_dictionary))))
+        list(zip(css_values_dictionary, list(range(len(css_values_dictionary))))))
     for css_property in css_properties:
         if css_property['field_template'] == 'keyword' and len(
                 css_property['include_paths']) == 0:

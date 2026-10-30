@@ -26,7 +26,7 @@ class CodeGenAccumulator(object):
         return self._include_headers
 
     def add_include_headers(self, headers):
-        self._include_headers.update(filter(None, headers))
+        self._include_headers.update([_f for _f in headers if _f])
 
     @staticmethod
     def require_include_headers(headers):
@@ -37,7 +37,7 @@ class CodeGenAccumulator(object):
         return self._class_decls
 
     def add_class_decls(self, class_names):
-        self._class_decls.update(filter(None, class_names))
+        self._class_decls.update([_f for _f in class_names if _f])
 
     @staticmethod
     def require_class_decls(class_names):
@@ -48,7 +48,7 @@ class CodeGenAccumulator(object):
         return self._struct_decls
 
     def add_struct_decls(self, struct_names):
-        self._struct_decls.update(filter(None, struct_names))
+        self._struct_decls.update([_f for _f in struct_names if _f])
 
     @staticmethod
     def require_struct_decls(struct_names):

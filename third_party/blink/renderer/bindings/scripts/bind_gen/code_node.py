@@ -503,13 +503,13 @@ class CompositeNode(CodeNode):
         gensym_kwargs = {}
         template_vars = {}
         for arg in args:
-            assert isinstance(arg, (CodeNode, int, long, str))
+            assert isinstance(arg, (CodeNode, int, str))
             gensym = CodeNode.gensym()
             gensym_args.append("${{{}}}".format(gensym))
             template_vars[gensym] = arg
         for key, value in kwargs.items():
-            assert isinstance(key, (int, long, str))
-            assert isinstance(value, (CodeNode, int, long, str))
+            assert isinstance(key, (int, str))
+            assert isinstance(value, (CodeNode, int, str))
             gensym = CodeNode.gensym()
             gensym_kwargs[key] = "${{{}}}".format(gensym)
             template_vars[gensym] = value
@@ -602,7 +602,7 @@ class ListNode(CodeNode):
     def insert(self, index, node):
         if node is None:
             return
-        assert isinstance(index, (int, long))
+        assert isinstance(index, int)
         assert isinstance(node, CodeNode)
         assert node.outer is None and node.prev is None
 
@@ -722,15 +722,14 @@ class SymbolScopeNode(SequenceNode):
                 return counts
 
             self_index = iter(scope_chains).next().index(self)
-            scope_chains = map(
-                lambda scope_chain: scope_chain[self_index + 1:], scope_chains)
+            scope_chains = [scope_chain[self_index + 1:] for scope_chain in scope_chains]
             scope_to_likeliness = {}
             for scope_chain in scope_chains:
                 if not scope_chain:
                     counts[DIRECT_USES] += 1
                 else:
                     likeliness = min(
-                        map(lambda scope: scope.likeliness, scope_chain))
+                        [scope.likeliness for scope in scope_chain])
                     scope = scope_chain[0]
                     scope_to_likeliness[scope] = max(
                         likeliness, scope_to_likeliness.get(scope, likeliness))
@@ -896,8 +895,7 @@ class SymbolNode(CodeNode):
 
     def _request_symbol_definition(self, renderer):
         symbol_scope_chain = tuple(
-            filter(lambda node: isinstance(node, SymbolScopeNode),
-                   renderer.callers_from_first_to_last))
+            [node for node in renderer.callers_from_first_to_last if isinstance(node, SymbolScopeNode)])
 
         for caller in renderer.callers_from_last_to_first:
             caller.on_code_symbol_referenced(self, symbol_scope_chain)

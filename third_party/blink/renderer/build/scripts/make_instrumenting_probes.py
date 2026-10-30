@@ -151,8 +151,8 @@ class Method(object):
         # Splitting parameters by a comma, assuming that attribute
         # lists contain no more than one attribute.
         self.params = list(
-            map(Parameter, map(str.strip,
-                               match.group(3).split(","))))
+            map(Parameter, list(map(str.strip,
+                               match.group(3).split(",")))))
 
 
 class Parameter(object):

@@ -1,8 +1,9 @@
 # Copyright 2020 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
-"""Script for ensuring that a python action runs under Python2, not Python3."""
+"""Runs a python2_action. Upstream forced Python 2 here; this branch runs Python 3."""
 
+import os
 import subprocess
 import sys
 
@@ -20,8 +21,15 @@ elif sys.executable.endswith('.exe'):
       ['python.bat', '-c',
        'import sys; print(sys.executable)']).decode('utf8').strip()
 else:
-  # If we get here, we are a Python3 executable. Hope that we can find
-  # a `python2.7` in path somewhere.
-  exe = 'python2.7'
+  # Python 3 only on this branch: the actions are ported, so run them with
+  # the interpreter GN started (script_executable in .gn).
+  exe = sys.executable
+
+# A script from a DEPS checkout that still assumes Python 2 has a shim of the same
+# name in py3_shims/, which takes the script and its arguments and runs it.
+shim = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'py3_shims',
+                    os.path.basename(sys.argv[1]))
+if os.path.isfile(shim):
+  sys.argv[1:1] = [shim]
 
 sys.exit(subprocess.call([exe] + sys.argv[1:]))

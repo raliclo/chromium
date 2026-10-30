@@ -145,8 +145,9 @@ def get_put_forward_interfaces_from_definition(definition):
 
 
 def get_unforgeable_attributes_from_definition(definition):
-    return sorted(attribute for attribute in definition.attributes
-                  if 'LegacyUnforgeable' in attribute.extended_attributes)
+    return sorted((attribute for attribute in definition.attributes
+                  if 'LegacyUnforgeable' in attribute.extended_attributes),
+                  key=lambda attribute: attribute.name)
 
 
 def collect_union_types_from_definitions(definitions):

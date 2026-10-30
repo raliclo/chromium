@@ -28,16 +28,16 @@ if sys.version_info.major != 2:
 
 class uint32_t(long):
     def __rshift__(self, other):
-        return uint32_t(long.__rshift__(self, other) & ((1 << 32) - 1))
+        return uint32_t(int.__rshift__(self, other) & ((1 << 32) - 1))
 
     def __lshift__(self, other):
-        return uint32_t(long.__lshift__(self, other) & ((1 << 32) - 1))
+        return uint32_t(int.__lshift__(self, other) & ((1 << 32) - 1))
 
     def __add__(self, other):
-        return uint32_t(long.__add__(self, other) & ((1 << 32) - 1))
+        return uint32_t(int.__add__(self, other) & ((1 << 32) - 1))
 
     def __xor__(self, other):
-        return uint32_t(long.__xor__(self, other) & ((1 << 32) - 1))
+        return uint32_t(int.__xor__(self, other) & ((1 << 32) - 1))
 
 
 def hash(string):

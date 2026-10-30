@@ -101,7 +101,7 @@ def _CheckForHashCollisions(sorted_resource_list):
     A set of all |Resource| objects with collisions.
   """
   collisions = set()
-  for i in xrange(len(sorted_resource_list) - 1):
+  for i in range(len(sorted_resource_list) - 1):
     resource = sorted_resource_list[i]
     next_resource = sorted_resource_list[i+1]
     if resource.hash == next_resource.hash:

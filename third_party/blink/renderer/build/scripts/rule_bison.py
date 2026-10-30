@@ -46,8 +46,8 @@ from blinkbuild.name_style_converter import NameStyleConverter
 
 
 def modify_file(path, prefix_lines, suffix_lines, replace_list=[]):
-    prefix_lines = map(lambda s: s + '\n', prefix_lines)
-    suffix_lines = map(lambda s: s + '\n', suffix_lines)
+    prefix_lines = [s + '\n' for s in prefix_lines]
+    suffix_lines = [s + '\n' for s in suffix_lines]
     with open(path, 'r') as f:
         old_lines = f.readlines()
     for i in range(len(old_lines)):

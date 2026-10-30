@@ -23,7 +23,7 @@ import textwrap
 from xml.sax.saxutils import escape as xml_escape
 
 if sys.version_info.major == 2:
-  string_type = basestring
+  string_type = str
 else:
   string_type = str
 
@@ -102,8 +102,7 @@ class PolicyDetails:
 
     self.platforms = set()
     self.future_on = set()
-    for platform, version_range in map(lambda s: s.split(':'),
-                                       policy.get('supported_on', [])):
+    for platform, version_range in [s.split(':') for s in policy.get('supported_on', [])]:
       split_result = version_range.split('-')
       if len(split_result) != 2:
         raise RuntimeError('supported_on must have exactly one dash: "%s"' % p)
@@ -1523,7 +1522,7 @@ def _GetSupportedChromeOSPolicies(policies, type):
   if (type not in ['user', 'device', 'both']):
     raise RuntimeError('Unsupported type "%s"' % type)
 
-  return filter(partial(_IsSupportedChromeOSPolicy, type), policies)
+  return list(filter(partial(_IsSupportedChromeOSPolicy, type), policies))
 
 
 # Returns the set of all policy.policy_protobuf_type strings from |policies|.

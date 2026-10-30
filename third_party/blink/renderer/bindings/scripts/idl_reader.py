@@ -56,7 +56,7 @@ def validate_blink_idl_definitions(idl_filename, idl_file_basename,
        - Otherwise, an IDL file is invalid.
     """
     targets = (
-        definitions.interfaces.values() + definitions.dictionaries.values())
+        list(definitions.interfaces.values()) + list(definitions.dictionaries.values()))
     number_of_targets = len(targets)
     if number_of_targets > 1:
         raise Exception(

@@ -147,7 +147,7 @@ def _CollectAllowedImportsFromBuildMetadata(build_metadata_filename):
     with open(metadata_filename) as f:
       metadata = json.load(f)
       allowed_imports.update(
-          map(os.path.normcase, map(os.path.normpath, metadata['sources'])))
+          list(map(os.path.normcase, list(map(os.path.normpath, metadata['sources'])))))
       for dep_metadata in metadata['deps']:
         if dep_metadata not in processed_deps:
           collect(dep_metadata)
@@ -365,7 +365,7 @@ already present in the provided output root.""")
   else:
     allowed_imports = None
 
-  module_metadata = map(lambda kvp: tuple(kvp.split('=')), args.module_metadata)
+  module_metadata = [tuple(kvp.split('=')) for kvp in args.module_metadata]
   _ParseMojoms(mojom_files, input_roots, output_root, args.enabled_features,
                module_metadata, allowed_imports)
 

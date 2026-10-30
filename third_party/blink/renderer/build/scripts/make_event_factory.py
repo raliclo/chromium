@@ -122,7 +122,7 @@ class EventFactoryWriter(json5_generator.Writer):
             'third_party/blink/renderer/platform/instrumentation/use_counter.h',
             'third_party/blink/renderer/platform/runtime_enabled_features.h',
         }
-        includes.update(map(self._headers_header_include_path, entries))
+        includes.update(list(map(self._headers_header_include_path, entries)))
         return sorted([x for x in includes if x])
 
     @template_expander.use_jinja(

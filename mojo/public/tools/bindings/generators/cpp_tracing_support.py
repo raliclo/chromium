@@ -9,8 +9,7 @@ from abc import ABCMeta
 from abc import abstractmethod
 
 
-class _OutputContext(object):
-  __metaclass__ = ABCMeta
+class _OutputContext(object, metaclass=ABCMeta):
   """Represents the context in which |self.value| should be used.
 
   This is a base class for _ArrayItem, _DictionaryItemWithLiteralKey, and

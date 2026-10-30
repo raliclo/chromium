@@ -561,8 +561,7 @@ def _make_reflect_process_keyword_state(cg_context):
             body=F("${return_value} = {};", constant(empty_default)))
 
     expr = " || ".join(
-        map(lambda keyword: "reflect_value == {}".format(constant(keyword)),
-            keywords))
+        ["reflect_value == {}".format(constant(keyword)) for keyword in keywords])
     branches.append(cond=expr, body=T("${return_value} = reflect_value;"))
 
     if invalid_default is not None:
@@ -582,7 +581,7 @@ def _make_blink_api_call(code_node,
                          overriding_args=None):
     assert isinstance(code_node, SymbolScopeNode)
     assert isinstance(cg_context, CodeGenContext)
-    assert num_of_args is None or isinstance(num_of_args, (int, long))
+    assert num_of_args is None or isinstance(num_of_args, int)
     assert (overriding_args is None
             or (isinstance(overriding_args, (list, tuple))
                 and all(isinstance(arg, str) for arg in overriding_args)))
@@ -1177,7 +1176,7 @@ def make_overload_dispatcher(cg_context):
 
     # TODO(yukishiino): Runtime-enabled features should be taken into account
     # when calculating the max argument size.
-    max_arg_size = max(map(args_size, items))
+    max_arg_size = max(list(map(args_size, items)))
     arg_count_def = F("const int arg_count = std::min(${info}.Length(), {});",
                       max_arg_size)
 
@@ -1196,8 +1195,7 @@ def make_overload_dispatcher(cg_context):
             did_use_break = did_use_break or can_fail
 
         conditional = expr_or(
-            map(lambda item: expr_from_exposure(item.function_like.exposure),
-                items))
+            [expr_from_exposure(item.function_like.exposure) for item in items])
         if not conditional.is_always_true:
             node = CxxUnlikelyIfNode(cond=conditional, body=node)
 
@@ -4652,7 +4650,7 @@ class _PropEntryConstructorGroup(_PropEntryBase):
     def __init__(self, is_context_dependent, exposure_conditional, world,
                  constructor_group, ctor_callback_name, ctor_func_length):
         assert isinstance(ctor_callback_name, str)
-        assert isinstance(ctor_func_length, (int, long))
+        assert isinstance(ctor_func_length, int)
 
         _PropEntryBase.__init__(self, is_context_dependent,
                                 exposure_conditional, world, constructor_group)
@@ -4680,7 +4678,7 @@ class _PropEntryOperationGroup(_PropEntryBase):
                  op_func_length,
                  no_alloc_direct_callback_name=None):
         assert isinstance(op_callback_name, str)
-        assert isinstance(op_func_length, (int, long))
+        assert isinstance(op_func_length, int)
 
         _PropEntryBase.__init__(self, is_context_dependent,
                                 exposure_conditional, world, operation_group)
@@ -4962,7 +4960,7 @@ def make_property_entries_and_callback_defs(cg_context, attribute_entries,
 
         iterate(collectionlike.attributes, process_attribute)
         iterate(
-            filter(should_define, collectionlike.operation_groups),
+            list(filter(should_define, collectionlike.operation_groups)),
             process_operation_group)
 
     return callback_def_nodes
@@ -4978,8 +4976,8 @@ def _make_install_prototype_object(cg_context):
 
     unscopables = []
     is_unscopable = lambda member: "Unscopable" in member.extended_attributes
-    unscopables.extend(filter(is_unscopable, class_like.attributes))
-    unscopables.extend(filter(is_unscopable, class_like.operations))
+    unscopables.extend(list(filter(is_unscopable, class_like.attributes)))
+    unscopables.extend(list(filter(is_unscopable, class_like.operations)))
     if unscopables:
         nodes.extend([
             TextNode("""\
@@ -5199,13 +5197,10 @@ def make_install_interface_template(cg_context, function_name, class_name,
     ])
 
     if class_like.identifier == "CSSStyleDeclaration":
-        css_properties = filter(
-            lambda attr: "CSSProperty" in attr.extended_attributes,
-            class_like.attributes)
+        css_properties = [attr for attr in class_like.attributes if "CSSProperty" in attr.extended_attributes]
         if css_properties:
             prop_name_list = "".join(
-                map(lambda attr: "\"{}\", ".format(attr.identifier),
-                    css_properties))
+                ["\"{}\", ".format(attr.identifier) for attr in css_properties])
             body.append(
                 T("""\
 // CSSStyleDeclaration-specific settings
@@ -5606,8 +5601,7 @@ ${instance_object} = ${v8_context}->Global()->GetPrototype().As<v8::Object>();\
         pattern,
         install_func="IDLMemberInstaller::InstallConstants",
         table_name=table_name)
-    constant_callback_entries = filter(lambda entry: entry.const_callback_name,
-                                       constant_entries)
+    constant_callback_entries = [entry for entry in constant_entries if entry.const_callback_name]
     install_properties(table_name, constant_callback_entries,
                        _make_constant_callback_registration_table,
                        installer_call_text)
@@ -5617,8 +5611,7 @@ ${instance_object} = ${v8_context}->Global()->GetPrototype().As<v8::Object>();\
         pattern,
         install_func="IDLMemberInstaller::InstallConstants",
         table_name=table_name)
-    constant_value_entries = filter(
-        lambda entry: not entry.const_callback_name, constant_entries)
+    constant_value_entries = [entry for entry in constant_entries if not entry.const_callback_name]
     install_properties(table_name, constant_value_entries,
                        _make_constant_value_registration_table,
                        installer_call_text)
@@ -5637,12 +5630,10 @@ ${instance_object} = ${v8_context}->Global()->GetPrototype().As<v8::Object>();\
         pattern,
         install_func="IDLMemberInstaller::InstallOperations",
         table_name=table_name)
-    entries = filter(lambda entry: not entry.no_alloc_direct_callback_name,
-                     operation_entries)
+    entries = [entry for entry in operation_entries if not entry.no_alloc_direct_callback_name]
     install_properties(table_name, entries, _make_operation_registration_table,
                        installer_call_text)
-    entries = filter(lambda entry: entry.no_alloc_direct_callback_name,
-                     operation_entries)
+    entries = [entry for entry in operation_entries if entry.no_alloc_direct_callback_name]
     install_properties(table_name, entries, _make_operation_registration_table,
                        installer_call_text)
 
@@ -5681,7 +5672,7 @@ def make_indexed_and_named_property_callbacks_and_install_node(cg_context):
 
     def most_derived_interface(*interfaces):
         key = lambda interface: len(interface.inclusive_inherited_interfaces)
-        return sorted(filter(None, interfaces), key=key)[-1]
+        return sorted([_f for _f in interfaces if _f], key=key)[-1]
 
     cg_context = cg_context.make_copy(
         v8_callback_type=CodeGenContext.V8_OTHER_CALLBACK)
@@ -5719,7 +5710,7 @@ def make_indexed_and_named_property_callbacks_and_install_node(cg_context):
             flags.append("v8::PropertyHandlerFlags::kHasNoSideEffect")
         property_handler_flags = (
             "static_cast<v8::PropertyHandlerFlags>({})".format(" | ".join(
-                map(lambda flag: "int32_t({})".format(flag), flags))))
+                ["int32_t({})".format(flag) for flag in flags])))
         pattern = """\
 // Named interceptors
 ${instance_object_template}->SetHandler(
@@ -6324,8 +6315,7 @@ def make_v8_context_snapshot_api(cg_context, component, attribute_entries,
         return None, None
 
     derived_interfaces = cg_context.interface.deriveds
-    derived_names = map(lambda interface: interface.identifier,
-                        derived_interfaces)
+    derived_names = [interface.identifier for interface in derived_interfaces]
     derived_names.append(cg_context.interface.identifier)
     if not ("Window" in derived_names or "HTMLDocument" in derived_names):
         return None, None
@@ -6399,9 +6389,7 @@ def _make_v8_context_snapshot_get_reference_table_function(
     collect_callbacks(named_properties_object_callback_defs)
     collect_callbacks(cross_origin_property_callback_defs)
 
-    entry_nodes = map(
-        lambda name: TextNode("reinterpret_cast<intptr_t>({}),".format(name)),
-        filter(None, callback_names))
+    entry_nodes = [TextNode("reinterpret_cast<intptr_t>({}),".format(name)) for name in [_f for _f in callback_names if _f]]
     table_node = ListNode([
         TextNode("static const intptr_t kReferenceTable[] = {"),
         ListNode(entry_nodes),
@@ -6438,10 +6426,10 @@ def _make_v8_context_snapshot_install_props_per_context_function(
         class_name=None,
         prop_install_mode=PropInstallMode.V8_CONTEXT_SNAPSHOT,
         trampoline_var_name=None,
-        attribute_entries=filter(selector, attribute_entries),
-        constant_entries=filter(selector, constant_entries),
-        exposed_construct_entries=filter(selector, exposed_construct_entries),
-        operation_entries=filter(selector, operation_entries))
+        attribute_entries=list(filter(selector, attribute_entries)),
+        constant_entries=list(filter(selector, constant_entries)),
+        exposed_construct_entries=list(filter(selector, exposed_construct_entries)),
+        operation_entries=list(filter(selector, operation_entries)))
 
     return func_decl, func_def
 
@@ -6804,11 +6792,11 @@ def generate_class_like(class_like):
          class_name=impl_class_name,
          prop_install_mode=PropInstallMode.UNCONDITIONAL,
          trampoline_var_name=tp_install_unconditional_props,
-         attribute_entries=filter(is_unconditional, attribute_entries),
-         constant_entries=filter(is_unconditional, constant_entries),
-         exposed_construct_entries=filter(is_unconditional,
-                                          exposed_construct_entries),
-         operation_entries=filter(is_unconditional, operation_entries))
+         attribute_entries=list(filter(is_unconditional, attribute_entries)),
+         constant_entries=list(filter(is_unconditional, constant_entries)),
+         exposed_construct_entries=list(filter(is_unconditional,
+                                          exposed_construct_entries)),
+         operation_entries=list(filter(is_unconditional, operation_entries)))
     (install_context_independent_props_decl,
      install_context_independent_props_def,
      install_context_independent_props_trampoline) = make_install_properties(
@@ -6817,11 +6805,11 @@ def generate_class_like(class_like):
          class_name=impl_class_name,
          prop_install_mode=PropInstallMode.CONTEXT_INDEPENDENT,
          trampoline_var_name=tp_install_context_independent_props,
-         attribute_entries=filter(is_context_independent, attribute_entries),
-         constant_entries=filter(is_context_independent, constant_entries),
-         exposed_construct_entries=filter(is_context_independent,
-                                          exposed_construct_entries),
-         operation_entries=filter(is_context_independent, operation_entries))
+         attribute_entries=list(filter(is_context_independent, attribute_entries)),
+         constant_entries=list(filter(is_context_independent, constant_entries)),
+         exposed_construct_entries=list(filter(is_context_independent,
+                                          exposed_construct_entries)),
+         operation_entries=list(filter(is_context_independent, operation_entries)))
     (install_context_dependent_props_decl, install_context_dependent_props_def,
      install_context_dependent_props_trampoline) = make_install_properties(
          cg_context,
@@ -6829,11 +6817,11 @@ def generate_class_like(class_like):
          class_name=impl_class_name,
          prop_install_mode=PropInstallMode.CONTEXT_DEPENDENT,
          trampoline_var_name=tp_install_context_dependent_props,
-         attribute_entries=filter(is_context_dependent, attribute_entries),
-         constant_entries=filter(is_context_dependent, constant_entries),
-         exposed_construct_entries=filter(is_context_dependent,
-                                          exposed_construct_entries),
-         operation_entries=filter(is_context_dependent, operation_entries))
+         attribute_entries=list(filter(is_context_dependent, attribute_entries)),
+         constant_entries=list(filter(is_context_dependent, constant_entries)),
+         exposed_construct_entries=list(filter(is_context_dependent,
+                                          exposed_construct_entries)),
+         operation_entries=list(filter(is_context_dependent, operation_entries)))
     (install_interface_template_decl, install_interface_template_def,
      install_interface_template_trampoline) = make_install_interface_template(
          cg_context,

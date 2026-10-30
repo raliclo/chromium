@@ -145,7 +145,7 @@ def GetInterfaceResponseName(method):
   return UpperCamelCase(method.name + '_Response')
 
 def ParseStringAttribute(attribute):
-  assert isinstance(attribute, basestring)
+  assert isinstance(attribute, str)
   return attribute
 
 def GetJavaTrueFalse(value):
@@ -334,7 +334,7 @@ def ExpressionToText(context, token, kind_spec=''):
     return _TranslateNamedValue(token)
   if kind_spec.startswith('i') or kind_spec.startswith('u'):
     number = ast.literal_eval(token.lstrip('+ '))
-    if not isinstance(number, (int, long)):
+    if not isinstance(number, int):
       raise ValueError('got unexpected type %r for int literal %r' % (
           type(number), token))
     # If the literal is too large to fit a signed long, convert it to the
@@ -419,8 +419,7 @@ def TempDir():
 def EnumCoversContinuousRange(kind):
   if not kind.fields:
     return False
-  number_of_unique_keys = len(set(map(
-      lambda field: field.numeric_value, kind.fields)))
+  number_of_unique_keys = len(set([field.numeric_value for field in kind.fields]))
   if kind.max_value - kind.min_value + 1 != number_of_unique_keys:
     return False
   return True

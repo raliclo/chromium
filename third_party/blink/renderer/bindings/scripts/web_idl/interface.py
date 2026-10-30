@@ -180,8 +180,7 @@ class Interface(UserDefinedType, WithExtendedAttributes, WithCodeGeneratorInfo,
         self._constructor_groups = tuple([
             ConstructorGroup(
                 group_ir,
-                filter(lambda x: x.identifier == group_ir.identifier,
-                       self._constructors),
+                [x for x in self._constructors if x.identifier == group_ir.identifier],
                 owner=self) for group_ir in ir.constructor_groups
         ])
         assert len(self._constructor_groups) <= 1
@@ -192,8 +191,7 @@ class Interface(UserDefinedType, WithExtendedAttributes, WithCodeGeneratorInfo,
         self._named_constructor_groups = tuple([
             ConstructorGroup(
                 group_ir,
-                filter(lambda x: x.identifier == group_ir.identifier,
-                       self._named_constructors),
+                [x for x in self._named_constructors if x.identifier == group_ir.identifier],
                 owner=self) for group_ir in ir.named_constructor_groups
         ])
         self._operations = tuple([
@@ -203,22 +201,18 @@ class Interface(UserDefinedType, WithExtendedAttributes, WithCodeGeneratorInfo,
         self._operation_groups = tuple([
             OperationGroup(
                 group_ir,
-                filter(lambda x: x.identifier == group_ir.identifier,
-                       self._operations),
+                [x for x in self._operations if x.identifier == group_ir.identifier],
                 owner=self) for group_ir in ir.operation_groups
         ])
         self._exposed_constructs = tuple(ir.exposed_constructs)
         self._legacy_window_aliases = tuple(ir.legacy_window_aliases)
         self._indexed_and_named_properties = None
-        indexed_and_named_property_operations = filter(
-            lambda x: x.is_indexed_or_named_property_operation,
-            self._operations)
+        indexed_and_named_property_operations = [x for x in self._operations if x.is_indexed_or_named_property_operation]
         if indexed_and_named_property_operations:
             self._indexed_and_named_properties = IndexedAndNamedProperties(
                 indexed_and_named_property_operations, owner=self)
         self._stringifier = None
-        stringifier_operation_irs = filter(lambda x: x.is_stringifier,
-                                           ir.operations)
+        stringifier_operation_irs = [x for x in ir.operations if x.is_stringifier]
         if stringifier_operation_irs:
             assert len(stringifier_operation_irs) == 1
             op_ir = make_copy(stringifier_operation_irs[0])
@@ -231,8 +225,7 @@ class Interface(UserDefinedType, WithExtendedAttributes, WithCodeGeneratorInfo,
             attribute = None
             if operation.stringifier_attribute:
                 attr_id = operation.stringifier_attribute
-                attributes = filter(lambda x: x.identifier == attr_id,
-                                    self._attributes)
+                attributes = [x for x in self._attributes if x.identifier == attr_id]
                 assert len(attributes) == 1
                 attribute = attributes[0]
             self._stringifier = Stringifier(operation, attribute, owner=self)
@@ -254,7 +247,7 @@ class Interface(UserDefinedType, WithExtendedAttributes, WithCodeGeneratorInfo,
     @property
     def deriveds(self):
         """Returns the list of the derived interfaces."""
-        return tuple(map(lambda ref: ref.target_object, self._deriveds))
+        return tuple([ref.target_object for ref in self._deriveds])
 
     @property
     def inclusive_inherited_interfaces(self):
@@ -346,7 +339,7 @@ class Interface(UserDefinedType, WithExtendedAttributes, WithCodeGeneratorInfo,
         Returns a list of the constructs that are exposed on this global object.
         """
         return tuple(
-            map(lambda ref: ref.target_object, self._exposed_constructs))
+            [ref.target_object for ref in self._exposed_constructs])
 
     @property
     def legacy_window_aliases(self):
@@ -578,8 +571,7 @@ class Iterable(WithDebugInfo):
         self._operation_groups = tuple([
             OperationGroup(
                 group_ir,
-                filter(lambda x: x.identifier == group_ir.identifier,
-                       self._operations),
+                [x for x in self._operations if x.identifier == group_ir.identifier],
                 owner=owner) for group_ir in ir.operation_groups
         ])
 
@@ -666,8 +658,7 @@ class Maplike(WithDebugInfo):
         self._operation_groups = tuple([
             OperationGroup(
                 group_ir,
-                filter(lambda x: x.identifier == group_ir.identifier,
-                       self._operations),
+                [x for x in self._operations if x.identifier == group_ir.identifier],
                 owner=owner) for group_ir in ir.operation_groups
         ])
 
@@ -755,8 +746,7 @@ class Setlike(WithDebugInfo):
         self._operation_groups = tuple([
             OperationGroup(
                 group_ir,
-                filter(lambda x: x.identifier == group_ir.identifier,
-                       self._operations),
+                [x for x in self._operations if x.identifier == group_ir.identifier],
                 owner=owner) for group_ir in ir.operation_groups
         ])
 

@@ -139,7 +139,7 @@ def _format(style_func, format_string, *args, **kwargs):
     assert callable(style_func)
     assert isinstance(format_string, str)
 
-    args = map(style_func, map(_tokenize, args))
+    args = list(map(style_func, list(map(_tokenize, args))))
     for key, value in kwargs.items():
         kwargs[key] = style_func(_tokenize(value))
     return format_string.format(*args, **kwargs)

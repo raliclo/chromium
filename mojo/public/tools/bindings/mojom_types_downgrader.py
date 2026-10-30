@@ -99,7 +99,7 @@ def DowngradePath(src_path, output_dir=None):
   elif os.path.isfile(src_path):
     DowngradeFile(src_path, output_dir)
   else:
-    print(">>> {} not pointing to a valid file or directory".format(src_path))
+    print((">>> {} not pointing to a valid file or directory".format(src_path)))
     sys.exit(1)
 
 

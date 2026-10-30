@@ -230,7 +230,7 @@ def ProcessJavacOutput(output):
       line = Colorize(line, marker_re, marker_color)
     return line
 
-  return '\n'.join(map(ApplyColors, filter(ApplyFilters, output.split('\n'))))
+  return '\n'.join(map(ApplyColors, list(filter(ApplyFilters, output.split('\n')))))
 
 
 def CheckErrorproneStderrWarning(jar_path, expected_warning_regex,
@@ -357,7 +357,7 @@ class _InfoFileContext(object):
     entries = self._Collect()
 
     logging.info('Writing info file: %s', output_path)
-    with build_utils.AtomicOutput(output_path) as f:
+    with build_utils.AtomicOutput(output_path, mode='w') as f:
       jar_info_utils.WriteJarInfoFile(f, entries, self._srcjar_files)
     logging.info('Completed info file: %s', output_path)
 

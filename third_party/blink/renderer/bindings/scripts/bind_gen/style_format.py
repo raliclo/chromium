@@ -72,7 +72,7 @@ def gn_format(contents, filename=None):
 def _invoke_format_command(command_line, filename, contents):
     proc = subprocess.Popen(
         command_line, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-    stdout_output, stderr_output = proc.communicate(input=contents)
+    stdout_output, stderr_output = proc.communicate(input=contents.encode('utf-8'))
     exit_code = proc.wait()
 
     return StyleFormatResult(

@@ -90,7 +90,7 @@ def main():
       # Step 1: Use R8 to find all @MainDex code, and all code reachable
       # from @MainDex code (recursive).
       proguard_cmd += ['--output', temp_jar.name]
-      with tempfile.NamedTemporaryFile() as proguard_flags_file:
+      with tempfile.NamedTemporaryFile(mode='w') as proguard_flags_file:
         for flag in proguard_flags:
           proguard_flags_file.write(flag + '\n')
         proguard_flags_file.flush()
@@ -132,7 +132,7 @@ def main():
     else:
       raise
 
-  with build_utils.AtomicOutput(args.main_dex_list_path) as f:
+  with build_utils.AtomicOutput(args.main_dex_list_path, mode='w') as f:
     f.write(main_dex_list)
 
   if args.depfile:

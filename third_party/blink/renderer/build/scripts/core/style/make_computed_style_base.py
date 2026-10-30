@@ -412,11 +412,11 @@ def _get_properties_ranking_using_partition_rule(properties_ranking,
         popularity in the ranking.
     """
     return dict(
-        zip(properties_ranking, [
+        list(zip(properties_ranking, [
             bisect.bisect_left(partition_rule,
                                float(i) / len(properties_ranking)) + 1
             for i in range(len(properties_ranking))
-        ]))
+        ])))
 
 
 def _best_rank(prop, ranking_map):

@@ -130,7 +130,7 @@ class RuntimeFeatureWriter(BaseRuntimeFeatureWriter):
                 'in_origin_trial': feature['in_origin_trial']
             }
         if os.path.isfile(file_name):
-            with open(os.path.abspath(file_name)) as pickle_file:
+            with open(os.path.abspath(file_name), 'rb') as pickle_file:
                 # pylint: disable=broad-except
                 try:
                     if pickle.load(pickle_file) == features_map:
@@ -138,7 +138,7 @@ class RuntimeFeatureWriter(BaseRuntimeFeatureWriter):
                 except Exception:
                     # If trouble unpickling, overwrite
                     pass
-        with open(os.path.abspath(file_name), 'w') as pickle_file:
+        with open(os.path.abspath(file_name), 'wb') as pickle_file:
             pickle.dump(features_map, pickle_file)
 
     def _template_inputs(self):

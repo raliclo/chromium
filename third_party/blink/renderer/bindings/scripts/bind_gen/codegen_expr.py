@@ -109,7 +109,7 @@ def expr_and(terms):
 
     if any(term.is_always_false for term in terms):
         return _Expr(False)
-    terms = filter(lambda x: not x.is_always_true, terms)
+    terms = [x for x in terms if not x.is_always_true]
     if not terms:
         return _Expr(True)
     if len(terms) == 1:
@@ -124,7 +124,7 @@ def expr_or(terms):
 
     if any(term.is_always_true for term in terms):
         return _Expr(True)
-    terms = filter(lambda x: not x.is_always_false, terms)
+    terms = [x for x in terms if not x.is_always_false]
     if not terms:
         return _Expr(False)
     if len(terms) == 1:
@@ -210,9 +210,7 @@ def expr_from_exposure(exposure,
             feature, arg))
 
     def ref_selected(features):
-        feature_tokens = map(
-            lambda feature: "OriginTrialFeature::k{}".format(feature),
-            features)
+        feature_tokens = ["OriginTrialFeature::k{}".format(feature) for feature in features]
         return _Expr("${{feature_selector}}.IsAnyOf({})".format(
             ", ".join(feature_tokens)))
 
@@ -222,7 +220,7 @@ def expr_from_exposure(exposure,
     elif exposure.only_in_secure_contexts is False:
         secure_context_term = _Expr(True)
     else:
-        terms = map(ref_enabled, exposure.only_in_secure_contexts)
+        terms = list(map(ref_enabled, exposure.only_in_secure_contexts))
         secure_context_term = expr_or(
             [_Expr("${is_in_secure_context}"),
              expr_not(expr_and(terms))])
@@ -269,16 +267,15 @@ def expr_from_exposure(exposure,
     # [RuntimeEnabled]
     if exposure.runtime_enabled_features:
         feature_enabled_terms.extend(
-            map(ref_enabled, exposure.runtime_enabled_features))
+            list(map(ref_enabled, exposure.runtime_enabled_features)))
         feature_selector_names.extend(
             exposure.context_dependent_runtime_enabled_features)
 
     # [ContextEnabled]
     if exposure.context_enabled_features:
-        terms = map(
-            lambda feature: _Expr(
+        terms = [_Expr(
                 "${{context_feature_settings}}->is{}Enabled()".format(
-                    feature)), exposure.context_enabled_features)
+                    feature)) for feature in exposure.context_enabled_features]
         context_enabled_terms.append(
             expr_and([_Expr("${context_feature_settings}"),
                       expr_or(terms)]))

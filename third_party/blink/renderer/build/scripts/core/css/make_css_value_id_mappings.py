@@ -58,7 +58,7 @@ def _find_largest_segment(segments):
         longest_segment: the start and end indices of the longest segment
 
     """
-    segment_list = zip(segments[:-1], segments[1:])
+    segment_list = list(zip(segments[:-1], segments[1:]))
     return max(segment_list, key=lambda x: x[1] - x[0])
 
 
@@ -85,11 +85,11 @@ def _find_enum_longest_continuous_segment(property_,
         Build the switch case statements of other enums not in the
         segment. Enums in the segment will be computed in default clause.
     """
-    property_enum_order = range(len(property_['keywords']))
+    property_enum_order = list(range(len(property_['keywords'])))
     css_enum_order = [
         name_to_position_dictionary[x] for x in property_['keywords']
     ]
-    enum_pair_list = zip(css_enum_order, property_enum_order)
+    enum_pair_list = list(zip(css_enum_order, property_enum_order))
     enum_segment, enum_pair_list = _find_continuous_segment(enum_pair_list)
     longest_segment = _find_largest_segment(enum_segment)
 
@@ -128,8 +128,8 @@ class CSSValueIDMappingsWriter(make_style_builder.StyleBuilderWriter):
             [self.css_values_dictionary_file],
             default_parameters=self.default_parameters).name_dictionaries
         name_to_position_dictionary = dict(
-            zip([x['name'].original for x in css_values_dictionary],
-                range(len(css_values_dictionary))))
+            list(zip([x['name'].original for x in css_values_dictionary],
+                list(range(len(css_values_dictionary))))))
 
         for property_ in self.css_properties.properties_including_aliases:
             include_paths.update(property_['include_paths'])

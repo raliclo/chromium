@@ -172,7 +172,7 @@ def main(argv):
       ret = subprocess.call(protoc_cmd)
 
       with open(options.descriptor_set_dependency_file, 'r') as f:
-        dependency_file_data = f.read().decode('utf-8')
+        dependency_file_data = f.read()
 
   ret = subprocess.call(protoc_cmd)
   if ret != 0:

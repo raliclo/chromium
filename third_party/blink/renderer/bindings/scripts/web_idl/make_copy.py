@@ -16,7 +16,7 @@ def make_copy(obj, memo=None):
         memo = dict()
 
     if (obj is None
-            or isinstance(obj, (bool, int, long, float, complex, basestring))):
+            or isinstance(obj, (bool, int, float, complex, str))):
         # Do not make a copy if the object is of an immutable primitive type
         # (or its subclass).
         #
@@ -43,7 +43,7 @@ def make_copy(obj, memo=None):
     cls = type(obj)
 
     if isinstance(obj, (list, tuple, set, frozenset)):
-        return memoize(cls(map(lambda x: make_copy(x, memo), obj)))
+        return memoize(cls([make_copy(x, memo) for x in obj]))
 
     if isinstance(obj, dict):
         return memoize(

@@ -177,7 +177,7 @@ def generate_callback_interface(callback_interface_identifier):
          prop_install_mode=PropInstallMode.UNCONDITIONAL,
          trampoline_var_name=None,
          attribute_entries=[],
-         constant_entries=filter(is_unconditional, constant_entries),
+         constant_entries=list(filter(is_unconditional, constant_entries)),
          exposed_construct_entries=[],
          operation_entries=[])
     (install_interface_template_decl, install_interface_template_def,
@@ -290,8 +290,7 @@ def generate_callback_interface(callback_interface_identifier):
     (header_forward_decls, header_include_headers, source_forward_decls,
      source_include_headers) = collect_forward_decls_and_include_headers(
          [callback_interface.operation_groups[0][0].return_type] +
-         map(lambda argument: argument.idl_type,
-             callback_interface.operation_groups[0][0].arguments))
+         [argument.idl_type for argument in callback_interface.operation_groups[0][0].arguments])
     header_node.accumulator.add_class_decls(header_forward_decls)
     header_node.accumulator.add_include_headers(header_include_headers)
     source_node.accumulator.add_class_decls(source_forward_decls)

@@ -43,7 +43,7 @@ _kind_to_cpp_proto_type = {
 
 def _IsStrOrUnicode(x):
   if sys.version_info[0] < 3:
-    return isinstance(x, (unicode, str))
+    return isinstance(x, str)
   return isinstance(x, str)
 
 
@@ -163,7 +163,7 @@ class Generator(CppGenerator):
             AddKind(parameter.kind)
 
     import_files = list(
-        map(lambda x: '{}.mojolpm.proto'.format(x.path), seen_imports))
+        ['{}.mojolpm.proto'.format(x.path) for x in seen_imports])
     if self.needs_mojolpm_proto:
       import_files.append('mojo/public/tools/fuzzers/mojolpm.proto')
     import_files.sort()

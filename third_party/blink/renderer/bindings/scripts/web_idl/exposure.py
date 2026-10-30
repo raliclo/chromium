@@ -9,7 +9,7 @@ class _Feature(str):
     """Represents a runtime-enabled feature."""
 
     def __init__(self, value):
-        str.__init__(self, value)
+        str.__init__(self)
         self._is_context_dependent = (
             RuntimeEnabledFeatures.is_context_dependent(self))
 

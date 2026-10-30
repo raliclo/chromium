@@ -71,7 +71,7 @@ def idl_file_to_global_names(idl_filename):
         raise ValueError(
             '[Global] must take an indentifier or an identifier list.\n' +
             full_path)
-    return map(str.strip, global_value.strip('()').split(','))
+    return list(map(str.strip, global_value.strip('()').split(',')))
 
 
 def idl_files_to_interface_name_global_names(idl_files):

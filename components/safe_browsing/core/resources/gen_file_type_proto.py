@@ -179,12 +179,12 @@ class DownloadFileTypeProtoGenerator(BinaryProtoGenerator):
 
   def VerifyArgs(self, opts):
     if (not opts.all and opts.type not in PlatformTypes()):
-      print "ERROR: Unknown platform type '%s'" % opts.type
+      print("ERROR: Unknown platform type '%s'" % opts.type)
       self.opt_parser.print_help()
       return False
 
     if (bool(opts.all) == bool(opts.type)):
-      print "ERROR: Need exactly one of --type or --all"
+      print("ERROR: Need exactly one of --type or --all")
       self.opt_parser.print_help()
       return False
     return True

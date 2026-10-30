@@ -319,8 +319,8 @@ class CxxFuncDeclNode(CompositeNode):
         CompositeNode.__init__(self,
                                template_format,
                                name=_to_maybe_text_node(name),
-                               arg_decls=ListNode(map(_to_maybe_text_node,
-                                                      arg_decls),
+                               arg_decls=ListNode(list(map(_to_maybe_text_node,
+                                                      arg_decls)),
                                                   separator=", "),
                                return_type=_to_maybe_text_node(return_type),
                                template=template,
@@ -401,7 +401,7 @@ class CxxFuncDefNode(CompositeNode):
             member_initializer_list = ""
         else:
             member_initializer_list = ListNode(
-                map(_to_maybe_text_node, member_initializer_list),
+                list(map(_to_maybe_text_node, member_initializer_list)),
                 separator=", ",
                 head=" : ")
 
@@ -413,7 +413,7 @@ class CxxFuncDefNode(CompositeNode):
             template_format,
             name=_to_maybe_text_node(name),
             arg_decls=ListNode(
-                map(_to_maybe_text_node, arg_decls), separator=", "),
+                list(map(_to_maybe_text_node, arg_decls)), separator=", "),
             return_type=_to_maybe_text_node(return_type),
             class_name=class_name,
             template=template,

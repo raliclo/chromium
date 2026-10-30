@@ -109,7 +109,7 @@ def _PrintMain(args):
       try:
         desc = six.text_type(data, encoding)
         if len(desc) > 60:
-          desc = desc[:60] + u'...'
+          desc = desc[:60] + '...'
         desc = desc.replace('\n', '\\n')
       except UnicodeDecodeError:
         pass
@@ -118,12 +118,12 @@ def _PrintMain(args):
       textual_id = info_dict[resource_id].textual_id
       canonical_textual_id = info_dict[canonical_id].textual_id
       output.write(
-          u'Entry(id={}, canonical_id={}, size={}, sha1={}): {}\n'.format(
+          'Entry(id={}, canonical_id={}, size={}, sha1={}): {}\n'.format(
               textual_id, canonical_textual_id, len(data), sha1,
               desc).encode('utf-8'))
     else:
       output.write(
-          u'Entry(id={}, canonical_id={}, size={}, sha1={}): {}\n'.format(
+          'Entry(id={}, canonical_id={}, size={}, sha1={}): {}\n'.format(
               resource_id, canonical_id, len(data), sha1, desc).encode('utf-8'))
 
 

@@ -861,7 +861,7 @@ def _GetTokenAssignments(tokens):
   token_variants = [token['variants'] for token in tokens]
 
   return [
-      TokenAssignment(pairings=dict(zip(token_keys, selected_variants)))
+      TokenAssignment(pairings=dict(list(zip(token_keys, selected_variants))))
       for selected_variants in itertools.product(*token_variants)
   ]
 

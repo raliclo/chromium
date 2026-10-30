@@ -21,4 +21,4 @@ class ARIAReader(object):
             self._data = json5.loads(json5_file.read())
 
     def attributes_list(self):
-        return {'data': [item[u'name'] for item in self._data['attributes']]}
+        return {'data': [item['name'] for item in self._data['attributes']]}
