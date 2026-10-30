@@ -18,7 +18,9 @@ def main():
   if sys.platform == 'win32':
     return 0
   subprocess.check_call([
-      'download_from_google_storage',
+      sys.executable,
+      os.path.join(os.path.dirname(__file__), '..', '..', 'third_party',
+                   'depot_tools', 'download_from_google_storage.py'),
       '--no_resume',
       '--no_auth',
       '--bucket', 'chromium-doclava',
