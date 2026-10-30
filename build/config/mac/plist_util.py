@@ -13,7 +13,7 @@ import tempfile
 import shlex
 
 if sys.version_info.major < 3:
-  basestring_compat = basestring
+  basestring_compat = str
 else:
   basestring_compat = str
 
@@ -84,7 +84,7 @@ def Interpolate(value, substitutions):
     substitution.
   """
   if isinstance(value, dict):
-    return {k: Interpolate(v, substitutions) for k, v in value.items()}
+    return {k: Interpolate(v, substitutions) for k, v in list(value.items())}
   if isinstance(value, list):
     return [Interpolate(v, substitutions) for v in value]
   if isinstance(value, basestring_compat):
@@ -138,7 +138,7 @@ def MergePList(plist1, plist2):
     are concatenated.
   """
   result = plist1.copy()
-  for key, value in plist2.items():
+  for key, value in list(plist2.items()):
     if isinstance(value, dict):
       old_value = result.get(key)
       if isinstance(old_value, dict):

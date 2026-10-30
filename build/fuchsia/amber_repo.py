@@ -10,7 +10,7 @@ import shutil
 import subprocess
 import tempfile
 import time
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 
 
 # Maximum amount of time to block while waiting for "pm serve" to come up.
@@ -58,9 +58,9 @@ class ManagedAmberRepo(AmberRepo):
     timeout = time.time() + _PM_SERVE_LIVENESS_TIMEOUT_SECS
     while True:
       try:
-        urllib2.urlopen('http://localhost:%d' % serve_port, timeout=1).read()
+        urllib.request.urlopen('http://localhost:%d' % serve_port, timeout=1).read()
         break
-      except urllib2.URLError:
+      except urllib.error.URLError:
         logging.info('Waiting until \'pm serve\' is up...')
 
       if time.time() >= timeout:

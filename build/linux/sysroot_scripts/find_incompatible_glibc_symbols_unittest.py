@@ -1,9 +1,9 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright 2018 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import cStringIO
+import io
 import find_incompatible_glibc_symbols
 
 NM_DATA = """\
@@ -27,7 +27,7 @@ EXPECTED_REPLACEMENTS = [
     '__asm__(".symver foo2, foo2@GLIBC_2.3");',
 ]
 
-nm_file = cStringIO.StringIO()
+nm_file = io.StringIO()
 nm_file.write(NM_DATA)
 nm_file.seek(0)
 

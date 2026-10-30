@@ -14,7 +14,7 @@ import subprocess
 import sys
 
 if sys.version_info.major < 3:
-  basestring_compat = basestring
+  basestring_compat = str
 else:
   basestring_compat = str
 

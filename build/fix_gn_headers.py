@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright 2017 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -80,7 +80,7 @@ def AddHeadersNextToCC(headers, skip_ambiguous=True):
       if skip_ambiguous:
         continue
 
-      picked = raw_input('Pick the matches ("2,3" for multiple): ')
+      picked = input('Pick the matches ("2,3" for multiple): ')
       try:
         matches = [matches[int(i) - 1] for i in picked.split(',')]
       except (ValueError, IndexError):
@@ -93,7 +93,7 @@ def AddHeadersNextToCC(headers, skip_ambiguous=True):
 
   for gnfile in edits:
     lines = open(gnfile).read().splitlines()
-    for l in sorted(edits[gnfile].keys(), reverse=True):
+    for l in sorted(list(edits[gnfile].keys()), reverse=True):
       lines.insert(l, edits[gnfile][l])
     open(gnfile, 'w').write('\n'.join(lines) + '\n')
 
@@ -173,7 +173,7 @@ def RemoveHeader(headers, skip_ambiguous=True):
       if skip_ambiguous:
         continue
 
-      picked = raw_input('Pick the matches ("2,3" for multiple): ')
+      picked = input('Pick the matches ("2,3" for multiple): ')
       try:
         matches = [matches[int(i) - 1] for i in picked.split(',')]
       except (ValueError, IndexError):

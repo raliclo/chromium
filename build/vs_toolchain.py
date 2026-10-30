@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright 2014 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -9,7 +9,6 @@ import collections
 import glob
 import json
 import os
-import pipes
 import platform
 import re
 import shutil
@@ -491,8 +490,7 @@ def Update(force=False, no_download=False):
     # For testing this block, unmount existing mounts with
     # fusermount -u third_party/depot_tools/win_toolchain/vs_files
     if sys.platform.startswith('linux') and not os.path.ismount(toolchain_dir):
-      import distutils.spawn
-      ciopfs = distutils.spawn.find_executable('ciopfs')
+      ciopfs = shutil.which('ciopfs')
       if not ciopfs:
         # ciopfs not found in PATH; try the one downloaded from the DEPS hook.
         ciopfs = os.path.join(script_dir, 'ciopfs')

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright 2017 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -112,7 +112,7 @@ def ParseGNProjectJSON(gn, out_dir, tmp_out):
   """Parse GN output and get the header files"""
   all_headers = set()
 
-  for _target, properties in gn['targets'].iteritems():
+  for _target, properties in gn['targets'].items():
     sources = properties.get('sources', [])
     public = properties.get('public', [])
     # Exclude '"public": "*"'.
@@ -294,7 +294,7 @@ def main():
         print('  ', cc)
 
     print('\nMissing headers sorted by number of affected object files:')
-    count = {k: len(v) for (k, v) in d.iteritems()}
+    count = {k: len(v) for (k, v) in d.items()}
     for f in sorted(count, key=count.get, reverse=True):
       if f in missing:
         print(count[f], f)

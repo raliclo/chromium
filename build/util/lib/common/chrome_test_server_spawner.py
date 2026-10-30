@@ -9,7 +9,7 @@ chrome test server on the host.
 """
 # pylint: disable=W0702
 
-import BaseHTTPServer
+import http.server
 import json
 import logging
 import os
@@ -19,7 +19,7 @@ import subprocess
 import sys
 import threading
 import time
-import urlparse
+import urllib.parse
 
 
 SERVER_TYPES = {
@@ -197,7 +197,7 @@ class TestServerThread(threading.Thread):
       self.command_line.append('--startup-pipe=%d' % self.pipe_out)
 
     # Pass the remaining arguments as-is.
-    for key, values in args_copy.iteritems():
+    for key, values in args_copy.items():
       if not isinstance(values, list):
         values = [values]
       for value in values:
@@ -210,7 +210,7 @@ class TestServerThread(threading.Thread):
     # This is required to avoid subtle deadlocks that could be caused by the
     # test server child process inheriting undesirable file descriptors such as
     # file lock file descriptors.
-    for fd in xrange(0, 1024):
+    for fd in range(0, 1024):
       if fd != self.pipe_out:
         try:
           os.close(fd)
@@ -291,7 +291,7 @@ class TestServerThread(threading.Thread):
     self.wait_event.wait()
 
 
-class SpawningServerRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+class SpawningServerRequestHandler(http.server.BaseHTTPRequestHandler):
   """A handler used to process http GET/POST request."""
 
   def _SendResponse(self, response_code, response_reason, additional_headers,
@@ -399,7 +399,7 @@ class SpawningServerRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
       pass
 
   def do_POST(self):
-    parsed_path = urlparse.urlparse(self.path)
+    parsed_path = urllib.parse.urlparse(self.path)
     action = parsed_path.path
     _logger.info('Action for POST method is: %s.', action)
     if action == '/start':
@@ -409,9 +409,9 @@ class SpawningServerRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
       _logger.info('Encounter unknown request: %s.', action)
 
   def do_GET(self):
-    parsed_path = urlparse.urlparse(self.path)
+    parsed_path = urllib.parse.urlparse(self.path)
     action = parsed_path.path
-    params = urlparse.parse_qs(parsed_path.query, keep_blank_values=1)
+    params = urllib.parse.parse_qs(parsed_path.query, keep_blank_values=1)
     _logger.info('Action for GET method is: %s.', action)
     for param in params:
       _logger.info('%s=%s', param, params[param][0])
@@ -432,7 +432,7 @@ class SpawningServer(object):
   """The class used to start/stop a http server."""
 
   def __init__(self, test_server_spawner_port, port_forwarder, max_instances):
-    self.server = BaseHTTPServer.HTTPServer(('', test_server_spawner_port),
+    self.server = http.server.HTTPServer(('', test_server_spawner_port),
                                             SpawningServerRequestHandler)
     self.server_port = self.server.server_port
     _logger.info('Started test server spawner on port: %d.', self.server_port)

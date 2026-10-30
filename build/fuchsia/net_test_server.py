@@ -37,7 +37,7 @@ class SSHPortForwarder(chrome_test_server_spawner.PortForwarder):
     return self._port_mapping[host_port]
 
   def Unmap(self, device_port):
-    for host_port, entry in self._port_mapping.iteritems():
+    for host_port, entry in self._port_mapping.items():
       if entry == device_port:
         forwarding_args = [
             '-NT', '-O', 'cancel', '-R', '0:localhost:%d' % host_port]

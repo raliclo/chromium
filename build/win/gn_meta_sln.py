@@ -34,7 +34,7 @@ def ExtractIdg(proj_file_name):
             if "<ItemDefinitionGroup" in p_line:
                 while not "</ItemDefinitionGroup" in p_line:
                     result.append(p_line)
-                    p_line = lines.next()
+                    p_line = next(lines)
                 result.append(p_line)
                 return result
 
@@ -108,7 +108,7 @@ new_sln_lines = []
 new_sln_lines.append(
     'Microsoft Visual Studio Solution File, Format Version 12.00\n')
 new_sln_lines.append('# Visual Studio ' + vs_version + '\n')
-for proj_name, proj_configs in all_projects.items():
+for proj_name, proj_configs in list(all_projects.items()):
     new_sln_lines.append('Project("{' + cpp_type_guid + '}") = "' + proj_name +
                          '", "' + proj_configs[0][1] + '", "{' +
                          proj_configs[0][2] + '}"\n')
@@ -123,7 +123,7 @@ for config in configs:
 new_sln_lines.append('\tEndGlobalSection\n')
 new_sln_lines.append(
     '\tGlobalSection(ProjectConfigurationPlatforms) = postSolution\n')
-for proj_name, proj_configs in all_projects.items():
+for proj_name, proj_configs in list(all_projects.items()):
     proj_guid = proj_configs[0][2]
     for config in configs:
         match = config[0] + '|' + hard_coded_arch
@@ -155,7 +155,7 @@ def FormatProjectConfig(config):
         config = config[0], arch = hard_coded_arch)
 
 # Now, bring over the project files
-for proj_name, proj_configs in all_projects.items():
+for proj_name, proj_configs in list(all_projects.items()):
     # Paths to project and filter file in src and dst locations
     src_proj_path = os.path.join("out", proj_configs[0][0], proj_configs[0][1])
     dst_proj_path = os.path.join("out", "sln", proj_configs[0][1])
@@ -180,7 +180,7 @@ for proj_name, proj_configs in all_projects.items():
                 idg_lines = []
                 while not "</ItemDefinitionGroup" in line:
                     idg_lines.append(line)
-                    line = proj_lines.next()
+                    line = next(proj_lines)
                 idg_lines.append(line)
                 for proj_config in proj_configs:
                     config_idg_lines = ExtractIdg(os.path.join("out",
@@ -192,10 +192,10 @@ for proj_name, proj_configs in all_projects.items():
                         new_proj_lines.append(idg_line)
             elif "ProjectConfigurations" in line:
                 new_proj_lines.append(line)
-                proj_lines.next()
-                proj_lines.next()
-                proj_lines.next()
-                proj_lines.next()
+                next(proj_lines)
+                next(proj_lines)
+                next(proj_lines)
+                next(proj_lines)
                 for config in configs:
                     new_proj_lines.append(FormatProjectConfig(config))
 

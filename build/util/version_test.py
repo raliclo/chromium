@@ -95,7 +95,7 @@ class _VersionTest(unittest.TestCase):
     result = {}
     version.FetchValuesFromFile(result, self._CHROME_VERSION_FILE)
 
-    for key, val in result.iteritems():
+    for key, val in result.items():
       self.assertIsInstance(key, str)
       self.assertIsInstance(val, str)
 
@@ -105,15 +105,15 @@ class _VersionTest(unittest.TestCase):
         get_new_args=lambda args: self._EXAMPLE_ANDROID_ARGS)
     contents = output['contents']
 
-    self.assertRegexpMatches(contents, r'\bchrome_version_code = "\d+"\s')
-    self.assertRegexpMatches(contents,
+    self.assertRegex(contents, r'\bchrome_version_code = "\d+"\s')
+    self.assertRegex(contents,
                              r'\bchrome_modern_version_code = "\d+"\s')
-    self.assertRegexpMatches(contents, r'\bmonochrome_version_code = "\d+"\s')
-    self.assertRegexpMatches(contents, r'\btrichrome_version_code = "\d+"\s')
-    self.assertRegexpMatches(contents,
+    self.assertRegex(contents, r'\bmonochrome_version_code = "\d+"\s')
+    self.assertRegex(contents, r'\btrichrome_version_code = "\d+"\s')
+    self.assertRegex(contents,
                              r'\bwebview_stable_version_code = "\d+"\s')
-    self.assertRegexpMatches(contents, r'\bwebview_beta_version_code = "\d+"\s')
-    self.assertRegexpMatches(contents, r'\bwebview_dev_version_code = "\d+"\s')
+    self.assertRegex(contents, r'\bwebview_beta_version_code = "\d+"\s')
+    self.assertRegex(contents, r'\bwebview_dev_version_code = "\d+"\s')
 
   def testBuildOutputAndroidArchVariantsArm64(self):
     """Assert 64-bit-specific version codes"""
@@ -129,13 +129,13 @@ class _VersionTest(unittest.TestCase):
     output = self._RunBuildOutput(get_new_args=lambda args: new_args)
     contents = output['contents']
 
-    self.assertRegexpMatches(contents,
+    self.assertRegex(contents,
                              r'\bmonochrome_64_32_version_code = "\d+"\s')
-    self.assertRegexpMatches(contents,
+    self.assertRegex(contents,
                              r'\bmonochrome_64_version_code = "\d+"\s')
-    self.assertRegexpMatches(contents,
+    self.assertRegex(contents,
                              r'\btrichrome_64_32_version_code = "\d+"\s')
-    self.assertRegexpMatches(contents,
+    self.assertRegex(contents,
                              r'\btrichrome_64_version_code = "\d+"\s')
 
   def testBuildOutputAndroidArchVariantsX64(self):
@@ -152,13 +152,13 @@ class _VersionTest(unittest.TestCase):
     output = self._RunBuildOutput(get_new_args=lambda args: new_args)
     contents = output['contents']
 
-    self.assertRegexpMatches(contents,
+    self.assertRegex(contents,
                              r'\bmonochrome_64_32_version_code = "\d+"\s')
-    self.assertRegexpMatches(contents,
+    self.assertRegex(contents,
                              r'\bmonochrome_64_version_code = "\d+"\s')
-    self.assertRegexpMatches(contents,
+    self.assertRegex(contents,
                              r'\btrichrome_64_32_version_code = "\d+"\s')
-    self.assertRegexpMatches(contents,
+    self.assertRegex(contents,
                              r'\btrichrome_64_version_code = "\d+"\s')
 
   def testBuildOutputAndroidChromeArchInput(self):

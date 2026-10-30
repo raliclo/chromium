@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright 2018 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -31,7 +31,7 @@ def get_replacements(nm_file, max_allowed_glibc_version):
       symbols[symbol] = set([version])
 
   replacements = []
-  for symbol, versions in symbols.iteritems():
+  for symbol, versions in symbols.items():
     if len(versions) <= 1:
       continue
     versions_parsed = [[

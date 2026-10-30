@@ -1,4 +1,4 @@
-#!/usr/bin/env vpython
+#!/usr/bin/env vpython3
 #
 # Copyright 2018 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
@@ -159,7 +159,7 @@ class RemoteTest(object):
     logging.info('Running the following command on the device:')
     logging.info('\n' + '\n'.join(script_contents))
     fd, tmp_path = tempfile.mkstemp(suffix='.sh', dir=self._path_to_outdir)
-    os.fchmod(fd, 0755)
+    os.fchmod(fd, 0o755)
     with os.fdopen(fd, 'wb') as f:
       f.write('\n'.join(script_contents) + '\n')
     return tmp_path
@@ -184,7 +184,7 @@ class RemoteTest(object):
 
     signal.signal(signal.SIGTERM, _kill_child_procs)
 
-    for i in xrange(self._retries + 1):
+    for i in range(self._retries + 1):
       logging.info('########################################')
       logging.info('Test attempt #%d', i)
       logging.info('########################################')

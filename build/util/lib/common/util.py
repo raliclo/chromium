@@ -5,14 +5,14 @@
 """Generic utilities for all python scripts."""
 
 import atexit
-import httplib
+import http.client
 import os
 import signal
 import stat
 import subprocess
 import sys
 import tempfile
-import urlparse
+import urllib.parse
 
 
 def GetPlatformName():
@@ -136,9 +136,9 @@ def DoesUrlExist(url):
   Returns:
     True if url exists, otherwise False.
   """
-  parsed = urlparse.urlparse(url)
+  parsed = urllib.parse.urlparse(url)
   try:
-    conn = httplib.HTTPConnection(parsed.netloc)
+    conn = http.client.HTTPConnection(parsed.netloc)
     conn.request('HEAD', parsed.path)
     response = conn.getresponse()
   except (socket.gaierror, socket.error):

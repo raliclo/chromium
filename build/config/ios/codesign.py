@@ -18,7 +18,7 @@ import sys
 import tempfile
 
 if sys.version_info.major < 3:
-  basestring_compat = basestring
+  basestring_compat = str
 else:
   basestring_compat = str
 
@@ -157,7 +157,7 @@ class Bundle(object):
       error message. The dictionary will be empty if there are no errors.
     """
     errors = {}
-    for key, expected_value in expected_mappings.items():
+    for key, expected_value in list(expected_mappings.items()):
       if key in self._data:
         value = self._data[key]
         if value != expected_value:
@@ -241,12 +241,12 @@ class Entitlements(object):
 
   def _ExpandVariables(self, data, substitutions):
     if isinstance(data, basestring_compat):
-      for key, substitution in substitutions.items():
+      for key, substitution in list(substitutions.items()):
         data = data.replace('$(%s)' % (key,), substitution)
       return data
 
     if isinstance(data, dict):
-      for key, value in data.items():
+      for key, value in list(data.items()):
         data[key] = self._ExpandVariables(value, substitutions)
       return data
 
@@ -257,7 +257,7 @@ class Entitlements(object):
     return data
 
   def LoadDefaults(self, defaults):
-    for key, value in defaults.items():
+    for key, value in list(defaults.items()):
       if key not in self._data:
         self._data[key] = value
 

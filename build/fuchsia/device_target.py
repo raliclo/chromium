@@ -249,7 +249,7 @@ class DeviceTarget(target.Target):
     # Repeatdly query mDNS until we find the device, or we hit the timeout of
     # DISCOVERY_TIMEOUT_SECS.
     logging.info('Waiting for device to join network.')
-    for _ in xrange(BOOT_DISCOVERY_ATTEMPTS):
+    for _ in range(BOOT_DISCOVERY_ATTEMPTS):
       if self._Discover():
         break
 

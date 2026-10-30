@@ -1,4 +1,4 @@
-#!/usr/bin/env vpython
+#!/usr/bin/env vpython3
 # Copyright 2019 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -160,7 +160,7 @@ def _SortListSubRange(input_list, start, end, key_func):
   """
   result = input_list[:start]
   inputs = []
-  for pos in xrange(start, end):
+  for pos in range(start, end):
     line = input_list[pos]
     key = key_func(line)
     inputs.append((key, line))
@@ -522,8 +522,8 @@ class _GetXmlLangAttributeTest(unittest.TestCase):
   }
 
   def test_GetXmlLangAttribute(self):
-    for test_line, expected in self.TEST_DATA.iteritems():
-      self.assertEquals(_GetXmlLangAttribute(test_line), expected)
+    for test_line, expected in self.TEST_DATA.items():
+      self.assertEqual(_GetXmlLangAttribute(test_line), expected)
 
 
 def _SortGrdElementsRanges(grd_lines, element_predicate):
@@ -550,7 +550,7 @@ def _CheckGrdElementRangeLang(grd_lines, start, end, wanted_locales):
   """
   errors = []
   locales = set()
-  for pos in xrange(start, end):
+  for pos in range(start, end):
     line = grd_lines[pos]
     lang = _GetXmlLangAttribute(line)
     if not lang:
@@ -613,7 +613,7 @@ def _CheckGrdElementRangeAndroidOutputFilename(grd_lines, start, end,
     List of error message strings for this input. Empty on success.
   """
   errors = []
-  for pos in xrange(start, end):
+  for pos in range(start, end):
     line = grd_lines[pos]
     lang = _GetXmlLangAttribute(line)
     if not lang:
@@ -673,7 +673,7 @@ def _AddMissingLocalesInGrdAndroidOutputs(grd_file, grd_lines, wanted_locales):
   intervals = _BuildIntervalList(grd_lines, _IsGrdAndroidOutputLine)
   for start, end in reversed(intervals):
     locales = set()
-    for pos in xrange(start, end):
+    for pos in range(start, end):
       lang = _GetXmlLangAttribute(grd_lines[pos])
       locale = _FixChromiumLangAttribute(lang)
       locales.add(locale)
@@ -685,7 +685,7 @@ def _AddMissingLocalesInGrdAndroidOutputs(grd_file, grd_lines, wanted_locales):
     src_locale = 'bg'
     src_lang_attribute = 'lang="%s"' % src_locale
     src_line = None
-    for pos in xrange(start, end):
+    for pos in range(start, end):
       if src_lang_attribute in grd_lines[pos]:
         src_line = grd_lines[pos]
         break
@@ -762,7 +762,7 @@ def _CheckGrdTranslationElementRange(grd_lines, start, end,
     List of error message strings for this input. Empty on success.
   """
   errors = []
-  for pos in xrange(start, end):
+  for pos in range(start, end):
     line = grd_lines[pos]
     lang = _GetXmlLangAttribute(line)
     if not lang:
@@ -845,7 +845,7 @@ def _AddMissingLocalesInGrdTranslations(grd_file, grd_lines, wanted_locales):
   intervals = _BuildIntervalList(grd_lines, _IsTranslationGrdOutputLine)
   for start, end in reversed(intervals):
     locales = set()
-    for pos in xrange(start, end):
+    for pos in range(start, end):
       lang = _GetXmlLangAttribute(grd_lines[pos])
       locale = _FixChromiumLangAttribute(lang)
       locales.add(locale)
@@ -857,7 +857,7 @@ def _AddMissingLocalesInGrdTranslations(grd_file, grd_lines, wanted_locales):
     src_locale = 'en-GB'
     src_lang_attribute = 'lang="%s"' % src_locale
     src_line = None
-    for pos in xrange(start, end):
+    for pos in range(start, end):
       if src_lang_attribute in grd_lines[pos]:
         src_line = grd_lines[pos]
         break
@@ -938,7 +938,7 @@ def _CheckGnOutputsRangeForLocalizedStrings(gn_lines, start, end):
   These are non-localized strings, and should be ignored. This function is
   used to detect them quickly.
   """
-  for pos in xrange(start, end):
+  for pos in range(start, end):
     if not 'values/' in gn_lines[pos]:
       return True
   return False
@@ -950,7 +950,7 @@ def _CheckGnOutputsRange(gn_lines, start, end, wanted_locales):
 
   errors = []
   locales = set()
-  for pos in xrange(start, end):
+  for pos in range(start, end):
     line = gn_lines[pos]
     android_locale = _GetAndroidGnOutputLocale(line)
     assert android_locale != None
@@ -991,7 +991,7 @@ def _AddMissingLocalesInGnAndroidOutputs(gn_file, gn_lines, wanted_locales):
       continue
 
     locales = set()
-    for pos in xrange(start, end):
+    for pos in range(start, end):
       lang = _GetAndroidGnOutputLocale(gn_lines[pos])
       locale = resource_utils.ToChromiumLocaleName(lang)
       locales.add(locale)
@@ -1003,7 +1003,7 @@ def _AddMissingLocalesInGnAndroidOutputs(gn_file, gn_lines, wanted_locales):
     src_locale = 'bg'
     src_values = 'values-%s/' % resource_utils.ToAndroidLocaleName(src_locale)
     src_line = None
-    for pos in xrange(start, end):
+    for pos in range(start, end):
       if src_values in gn_lines[pos]:
         src_line = gn_lines[pos]
         break
@@ -1310,7 +1310,7 @@ instead of the default format (which is a space-separated list of locale names).
         help='Output as JSON list.')
     group.add_argument(
         '--type',
-        choices=tuple(self.TYPE_MAP.viewkeys()),
+        choices=tuple(self.TYPE_MAP.keys()),
         default='all',
         help='Select type of locale list to print.')
 
