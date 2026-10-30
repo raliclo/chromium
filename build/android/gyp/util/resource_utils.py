@@ -749,6 +749,7 @@ def ExtractBinaryManifestValues(aapt2_path, apk_path):
   output = subprocess.check_output([
       aapt2_path, 'dump', 'xmltree', apk_path, '--file', 'AndroidManifest.xml'
   ])
+  output = output.decode('utf-8')
   version_code = re.search(r'versionCode.*?=(\d*)', output).group(1)
   version_name = re.search(r'versionName.*?="(.*?)"', output).group(1)
   package_name = re.search(r'package.*?="(.*?)"', output).group(1)
@@ -759,7 +760,8 @@ def ExtractArscPackage(aapt2_path, apk_path):
   """Returns (package_name, package_id) of resources.arsc from apk_path."""
   proc = subprocess.Popen([aapt2_path, 'dump', 'resources', apk_path],
                           stdout=subprocess.PIPE,
-                          stderr=subprocess.PIPE)
+                          stderr=subprocess.PIPE,
+                          universal_newlines=True)
   for line in proc.stdout:
     # Package name=org.chromium.webview_shell id=7f
     if line.startswith('Package'):

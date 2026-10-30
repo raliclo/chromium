@@ -550,7 +550,7 @@ def _ConvertToWebPSingle(png_path, cwebp_binary, cwebp_version, webp_cache_dir):
 
 
 def _ConvertToWebP(cwebp_binary, png_paths, path_info, webp_cache_dir):
-  cwebp_version = subprocess.check_output([cwebp_binary, '-version']).rstrip()
+  cwebp_version = subprocess.check_output([cwebp_binary, '-version']).decode('utf-8').rstrip()
   shard_args = [(f, ) for f in png_paths
                 if not _PNG_WEBP_EXCLUSION_PATTERN.match(f)]
 
