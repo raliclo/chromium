@@ -8,6 +8,9 @@ import("//third_party/angle/dotfile_settings.gni")
 # The location of the build configuration file.
 buildconfig = "//build/config/BUILDCONFIG.gn"
 
+# Run GN's actions and exec_script() calls with Python 3.
+script_executable = "python3"
+
 # These arguments override the default values for items in a declare_args
 # block. "gn args" in turn can override these.
 #
