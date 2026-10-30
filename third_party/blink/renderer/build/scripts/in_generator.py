@@ -61,7 +61,7 @@ class GenericWriter(object):
                 output_file.write(contents)
 
     def write_files(self, output_dir):
-        for file_name, generator in self._outputs.items():
+        for file_name, generator in list(self._outputs.items()):
             self._write_file_if_changed(output_dir, generator(), file_name)
 
     def set_gperf_path(self, gperf_path):
@@ -78,7 +78,7 @@ class Writer(GenericWriter):
     def __init__(self, in_files):
         super(Writer, self).__init__(in_files)
 
-        if isinstance(in_files, basestring):
+        if isinstance(in_files, str):
             in_files = [in_files]
         if in_files:
             self.in_file = InFile.load_from_files(in_files, self.defaults,

@@ -18,7 +18,7 @@ import os
 import re
 import sys
 
-from cStringIO import StringIO
+from io import StringIO
 from optparse import OptionParser
 
 sys.path.insert(

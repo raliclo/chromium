@@ -585,7 +585,7 @@ def argument_set_default_value(argument):
             return '/* null default value */'
         if default_value.value == "{}":
             member_type = idl_type.dictionary_member_type
-        elif isinstance(default_value.value, basestring):
+        elif isinstance(default_value.value, str):
             member_type = idl_type.string_member_type
         elif isinstance(default_value.value, (int, float)):
             member_type = idl_type.numeric_member_type

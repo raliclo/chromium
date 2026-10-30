@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright 2014 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -59,7 +59,7 @@ def ReadRunFile(run_file):
     elif ext == ".run":
       tests += ReadRunFile(os.path.join(base_dir, line))
     else:
-      raise ValueError, "Unexpected line '%s' in '%s'" % (line, run_file)
+      raise ValueError("Unexpected line '%s' in '%s'" % (line, run_file))
   return tests
 
 def GenerateTests(run_files, output):

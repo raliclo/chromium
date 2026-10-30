@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 #
 # Copyright 2017 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
@@ -80,7 +80,7 @@ def read_idl_file(reader, idl_filename):
     assert len(interfaces) == 1, (
         "Expected one interface in file %r, found %d" %
         (idl_filename, len(interfaces)))
-    return (interfaces.values()[0], includes)
+    return (list(interfaces.values())[0], includes)
 
 
 def interface_is_global(interface):
@@ -209,7 +209,7 @@ def origin_trial_features_context(generator_name, feature_info):
         interface_info.v8_class,
         'installers':
         get_install_functions([interface_info], feature_names)
-    } for interface_info, feature_names in features_for_type.items()]
+    } for interface_info, feature_names in list(features_for_type.items())]
     context['installers_by_interface'].sort(key=lambda x: x['name'])
 
     # For each conditional feature, collect a list of bindings installation
@@ -221,7 +221,7 @@ def origin_trial_features_context(generator_name, feature_info):
         'OriginTrialFeature::k%s' % feature_name,
         'installers':
         get_install_functions(interfaces, [feature_name])
-    } for feature_name, interfaces in types_for_feature.items()]
+    } for feature_name, interfaces in list(types_for_feature.items())]
     context['installers_by_feature'].sort(key=lambda x: x['name'])
 
     return context
@@ -281,7 +281,7 @@ def main():
 
     info_provider = create_component_info_provider(
         os.path.normpath(options.info_dir), options.target_component)
-    idl_filenames = map(str.strip, open(options.idl_files_list))
+    idl_filenames = list(map(str.strip, open(options.idl_files_list)))
 
     generate_origin_trial_features(info_provider, options, idl_filenames)
     return 0

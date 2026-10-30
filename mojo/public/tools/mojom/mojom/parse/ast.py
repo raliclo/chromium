@@ -14,7 +14,7 @@ import sys
 
 def _IsStrOrUnicode(x):
   if sys.version_info[0] < 3:
-    return isinstance(x, (unicode, str))
+    return isinstance(x, str)
   return isinstance(x, str)
 
 

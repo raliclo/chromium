@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright 2018 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
@@ -46,7 +46,7 @@ def DoMain(argv):
   path_template = "org/chromium/content/app/SandboxedProcessService{0}.java"
   with build_utils.AtomicOutput(output) as f:
     with zipfile.ZipFile(f, 'w', zipfile.ZIP_STORED) as srcjar:
-      for i in xrange(number):
+      for i in range(number):
         build_utils.AddToZipHermetic(srcjar,
                                      path_template.format(i),
                                      data=GenerateService(i))

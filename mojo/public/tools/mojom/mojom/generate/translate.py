@@ -21,7 +21,7 @@ from mojom.parse import ast
 
 def _IsStrOrUnicode(x):
   if sys.version_info[0] < 3:
-    return isinstance(x, (unicode, str))
+    return isinstance(x, str)
   return isinstance(x, str)
 
 
@@ -195,7 +195,7 @@ def _LookupValueInScope(module, kind, identifier):
   """Given a kind and an identifier, this attempts to resolve the given
   identifier to a concrete NamedValue within the scope of the given kind."""
   scope = _GetScopeForKind(module, kind)
-  for i in reversed(range(len(scope) + 1)):
+  for i in reversed(list(range(len(scope) + 1))):
     qualified_name = '.'.join(scope[:i] + (identifier, ))
     value = module.values.get(qualified_name)
     if value:
@@ -304,12 +304,12 @@ def _Kind(kinds, spec, scope):
 def _Import(module, import_module):
   # Copy the struct kinds from our imports into the current module.
   importable_kinds = (mojom.Struct, mojom.Union, mojom.Enum, mojom.Interface)
-  for kind in import_module.kinds.values():
+  for kind in list(import_module.kinds.values()):
     if (isinstance(kind, importable_kinds)
         and kind.module.path == import_module.path):
       module.kinds[kind.spec] = kind
   # Ditto for values.
-  for value in import_module.values.values():
+  for value in list(import_module.values.values()):
     if value.module.path == import_module.path:
       module.values[value.GetSpec()] = value
 
@@ -458,12 +458,10 @@ def _Method(module, parsed_method, interface):
       parsed_method.mojom_name,
       ordinal=parsed_method.ordinal.value if parsed_method.ordinal else None)
   method.parameters = list(
-      map(lambda parameter: _Parameter(module, parameter, interface),
-          parsed_method.parameter_list))
+      [_Parameter(module, parameter, interface) for parameter in parsed_method.parameter_list])
   if parsed_method.response_parameter_list is not None:
     method.response_parameters = list(
-        map(lambda parameter: _Parameter(module, parameter, interface),
-            parsed_method.response_parameter_list))
+        [_Parameter(module, parameter, interface) for parameter in parsed_method.response_parameter_list])
   method.attributes = _AttributeListToDict(parsed_method.attribute_list)
 
   # Enforce that only methods with response can have a [Sync] attribute.
@@ -589,8 +587,7 @@ def _Enum(module, parsed_enum, parent_kind):
 
   if not enum.native_only:
     enum.fields = list(
-        map(lambda field: _EnumField(module, enum, field),
-            parsed_enum.enum_value_list))
+        [_EnumField(module, enum, field) for field in parsed_enum.enum_value_list])
     _ResolveNumericEnumValues(enum)
 
   module.kinds[enum.spec] = enum
@@ -785,8 +782,7 @@ def _Module(tree, path, imports):
   all_defined_kinds = {}
   for struct in module.structs:
     struct.fields = list(
-        map(lambda field: _StructField(module, field, struct),
-            struct.fields_data))
+        [_StructField(module, field, struct) for field in struct.fields_data])
     _AssignDefaultOrdinals(struct.fields)
     del struct.fields_data
     all_defined_kinds[struct.spec] = struct
@@ -795,15 +791,14 @@ def _Module(tree, path, imports):
 
   for union in module.unions:
     union.fields = list(
-        map(lambda field: _UnionField(module, field, union), union.fields_data))
+        [_UnionField(module, field, union) for field in union.fields_data])
     _AssignDefaultOrdinals(union.fields)
     del union.fields_data
     all_defined_kinds[union.spec] = union
 
   for interface in module.interfaces:
     interface.methods = list(
-        map(lambda method: _Method(module, method, interface),
-            interface.methods_data))
+        [_Method(module, method, interface) for method in interface.methods_data])
     _AssignDefaultOrdinals(interface.methods)
     del interface.methods_data
     all_defined_kinds[interface.spec] = interface
@@ -813,7 +808,7 @@ def _Module(tree, path, imports):
     all_defined_kinds[enum.spec] = enum
 
   all_referenced_kinds = _CollectReferencedKinds(module,
-                                                 all_defined_kinds.values())
+                                                 list(all_defined_kinds.values()))
   imported_kind_specs = set(all_referenced_kinds.keys()).difference(
       set(all_defined_kinds.keys()))
   module.imported_kinds = dict(

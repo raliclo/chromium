@@ -77,13 +77,12 @@ SPECIAL_KEYWORD_LIST = ['GETTER', 'SETTER', 'DELETER']
 ################################################################################
 
 
-class TypedObject(object):
+class TypedObject(object, metaclass=abc.ABCMeta):
     """Object with a type, such as an Attribute or Operation (return value).
 
     The type can be an actual type, or can be a typedef, which must be resolved
     by the TypedefResolver before passing data to the code generator.
     """
-    __metaclass__ = abc.ABCMeta
     idl_type_attributes = ('idl_type', )
 
 
@@ -137,22 +136,22 @@ class IdlDefinitions(object):
 
     def accept(self, visitor):
         visitor.visit_definitions(self)
-        for interface in self.interfaces.values():
+        for interface in list(self.interfaces.values()):
             interface.accept(visitor)
-        for callback_function in self.callback_functions.values():
+        for callback_function in list(self.callback_functions.values()):
             callback_function.accept(visitor)
-        for dictionary in self.dictionaries.values():
+        for dictionary in list(self.dictionaries.values()):
             dictionary.accept(visitor)
-        for enumeration in self.enumerations.values():
+        for enumeration in list(self.enumerations.values()):
             enumeration.accept(visitor)
         for include in self.includes:
             include.accept(visitor)
-        for typedef in self.typedefs.values():
+        for typedef in list(self.typedefs.values()):
             typedef.accept(visitor)
 
     def update(self, other):
         """Update with additional IdlDefinitions."""
-        for interface_name, new_interface in other.interfaces.items():
+        for interface_name, new_interface in list(other.interfaces.items()):
             if not new_interface.is_partial:
                 # Add as new interface
                 self.interfaces[interface_name] = new_interface
@@ -394,7 +393,7 @@ class IdlInterface(object):
             else:
                 raise ValueError('Unrecognized node class: %s' % child_class)
 
-        if len(filter(None, [self.iterable, self.maplike, self.setlike])) > 1:
+        if len([_f for _f in [self.iterable, self.maplike, self.setlike] if _f]) > 1:
             raise ValueError(
                 'Interface can only have one of iterable<>, maplike<> and setlike<>.'
             )
@@ -429,8 +428,8 @@ class IdlInterface(object):
             extended_attributes = (
                 convert_constructor_operations_extended_attributes(
                     constructor_operations_extended_attributes))
-            if any(name in extended_attributes.keys()
-                   for name in self.extended_attributes.keys()):
+            if any(name in list(extended_attributes.keys())
+                   for name in list(self.extended_attributes.keys())):
                 raise ValueError('Detected mixed extended attributes for '
                                  'both [Constructor] and constructor '
                                  'operations. Do not use both in a single '
@@ -1055,7 +1054,7 @@ def convert_constructor_operations_extended_attributes(extended_attributes):
     """
 
     converted = {}
-    for name, value in extended_attributes.items():
+    for name, value in list(extended_attributes.items()):
         if name == "CallWith":
             converted["ConstructorCallWith"] = value
         elif name == "RaisesException":

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright 2019 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -15,8 +15,8 @@ import json
 import logging
 import re
 import sys
-import urllib
-import urllib2
+import urllib.request, urllib.parse, urllib.error
+import urllib.request, urllib.error, urllib.parse
 
 _TESTS = [
     'Basic', 'Video_720_MP4', 'Video_720_MP4_Fullscreen',
@@ -34,10 +34,10 @@ def GetBuildData(method, request):
   # The Python docs are wrong. It's fine for this payload to be just
   # a JSON string.
   headers = {'content-type': 'application/json', 'accept': 'application/json'}
-  url = urllib2.Request(
+  url = urllib.request.Request(
       'https://cr-buildbucket.appspot.com/prpc/buildbucket.v2.Builds/' + method,
       request, headers)
-  conn = urllib2.urlopen(url)
+  conn = urllib.request.urlopen(url)
   result = conn.read()
   conn.close()
   # Result is a multi-line string the first line of which is
@@ -118,12 +118,12 @@ def FindStepLogURL(steps, step_name, log_name):
 
 
 def ProcessStepStdout(stdout_url, entry):
-  url = urllib.unquote(stdout_url)
+  url = urllib.parse.unquote(stdout_url)
   number = entry['number']
   logging.debug('[BUILD %d] stdout URL: %s' % (number, url))
 
   # The following fails with Python 2.7.6, but succeeds with Python 2.7.14.
-  conn = urllib2.urlopen(stdout_url + '?format=raw')
+  conn = urllib.request.urlopen(stdout_url + '?format=raw')
   data = conn.read()
   conn.close()
 
@@ -300,7 +300,7 @@ def main():
         build_json = GetJsonForBuildSteps(options.bot, build_id)
         build_json['number'] = build_id
         builds.append(build_json)
-      except urllib2.HTTPError:
+      except urllib.error.HTTPError:
         logging.warn('HTTPError raised, failed to load data from build %d',
                      build_id)
 

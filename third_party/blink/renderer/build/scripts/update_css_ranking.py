@@ -7,7 +7,7 @@
 #        Run `python update_css_ranking.py <ranking_file> <ranking_api_link>`
 #        to update the ranking from <ranking_api_link> API to <ranking_file>
 
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import json
 import sys
 import cluster
@@ -36,7 +36,7 @@ def update_css_ranking(css_ranking_file, css_ranking_api):
         css_ranking_api: url to CSS ranking api
 
     """
-    css_ranking = json.loads(urllib2.urlopen(css_ranking_api).read())
+    css_ranking = json.loads(urllib.request.urlopen(css_ranking_api).read())
     css_ranking_content = {"properties": {}, "data": []}
     css_ranking_content["data"] = [
         property_["property_name"] for property_ in sorted(
@@ -90,7 +90,7 @@ def produce_partition_rule(config_file, css_ranking_api):
 
     """
     css_ranking = sorted(
-        json.loads(urllib2.urlopen(css_ranking_api).read()),
+        json.loads(urllib.request.urlopen(css_ranking_api).read()),
         key=lambda x: -x["day_percentage"])
     total_css_properties = len(css_ranking)
     css_ranking_dictionary = dict(

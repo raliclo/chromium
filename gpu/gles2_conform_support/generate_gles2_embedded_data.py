@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright (c) 2013 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -70,7 +70,7 @@ class GenerateEmbeddedFiles(object):
           sub_dirs.append(full_path)
       elif ext in GenerateEmbeddedFiles.extensions_to_include:
         if self.base_dir == None:
-          print full_path.replace("\\", "/")
+          print(full_path.replace("\\", "/"))
         else:
           self.count += 1
           name = "_FILE_%s_%d" % (ext.upper(), self.count)

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # Copyright (C) 2013 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -82,11 +82,10 @@ def parse_options():
     return options, idl_filename
 
 
-class IdlCompiler(object):
+class IdlCompiler(object, metaclass=abc.ABCMeta):
     """The IDL Compiler.
 
     """
-    __metaclass__ = abc.ABCMeta
 
     def __init__(self,
                  output_directory,

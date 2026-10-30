@@ -1,4 +1,4 @@
-#!/usr/bin/env vpython
+#!/usr/bin/env vpython3
 # Copyright 2020 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -148,7 +148,7 @@ def FillTrybotRuns(blamelist, trybot, project):
   """
   total_cls = len(blamelist)
   for i, entry in enumerate(blamelist):
-    print 'Getting data for CL %s/%s' % (i + 1, total_cls)
+    print('Getting data for CL %s/%s' % (i + 1, total_cls))
     largest_patchset = 0
     all_trybots = QueryTrybotsForCl(entry.cl_number, project)
     assert all_trybots
@@ -246,9 +246,9 @@ def main():
   blamelist = GetBlamelist(args.start_revision, args.end_revision)
   FillGerritUrls(blamelist)
   FillTrybotRuns(blamelist, args.trybot, args.project)
-  print '\n\nBlamelist (latest first):\n'
+  print('\n\nBlamelist (latest first):\n')
   for entry in blamelist:
-    print entry
+    print(entry)
 
 
 if __name__ == '__main__':

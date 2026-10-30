@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 # Copyright 2019 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -28,11 +28,11 @@ def writecerts(name, der_certs):
   fn = os.path.join('..', 'certificates', name)
 
   text_certs = []
-  print 'pretty printing', fn
+  print('pretty printing', fn)
   for der in der_certs:
     text_certs.append(pretty_print_cert(der))
 
-  print 'writing', fn
+  print('writing', fn)
   with open(fn, 'w') as f:
     f.write('\n'.join(text_certs))
 
@@ -64,7 +64,7 @@ def GeneratePrintableStringUtf8StringChain():
   issuer_name = "Intermediate" + namesuffix
   certs = GenerateCertAndIntermediate(leaf_subject="Leaf" + namesuffix,
                                       leaf_issuer=issuer_name,
-                                      intermediate_subject=unicode(issuer_name),
+                                      intermediate_subject=str(issuer_name),
                                       ip_sans=["\x7F\x00\x00\x01"],
                                       dns_sans=["example.test"])
   writecerts('name-normalization-printable-utf8.pem', certs)

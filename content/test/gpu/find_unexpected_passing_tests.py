@@ -1,4 +1,4 @@
-#!/usr/bin/env vpython
+#!/usr/bin/env vpython3
 # Copyright 2020 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -105,37 +105,37 @@ def PrintUnexpectedPasses(unexpected_passes, args):
     unexpected_passes: The output of GetUnexpectedPasses().
     args: The parsed arguments from an argparse.ArgumentParser.
   """
-  for builder, passes in unexpected_passes.iteritems():
+  for builder, passes in unexpected_passes.items():
     passed_all = {}
     passed_some = {}
-    for suite, tests in passes.iteritems():
-      for test, num_passes in tests.iteritems():
+    for suite, tests in passes.items():
+      for test, num_passes in tests.items():
         if num_passes == args.num_samples:
           passed_all.setdefault(suite, []).append(test)
         else:
           passed_some.setdefault(suite, []).append((test, num_passes))
 
     # Alphabetize for readability.
-    for tests in passed_all.values():
+    for tests in list(passed_all.values()):
       tests.sort()
-    for tests in passed_some.values():
+    for tests in list(passed_some.values()):
       tests.sort()
 
-    print '##### %s #####' % builder
+    print('##### %s #####' % builder)
     if passed_all:
-      print '----- Tests that passed in all runs -----'
-      for suite, tests in passed_all.iteritems():
-        print '%s:' % suite
+      print('----- Tests that passed in all runs -----')
+      for suite, tests in passed_all.items():
+        print('%s:' % suite)
         for test in tests:
-          print '    %s' % test
-        print ''
+          print('    %s' % test)
+        print('')
     if passed_some:
-      print '----- Tests that passed in some runs -----'
-      for suite, tests in passed_some.iteritems():
-        print '%s:' % suite
+      print('----- Tests that passed in some runs -----')
+      for suite, tests in passed_some.items():
+        print('%s:' % suite)
         for (test, num_passes) in tests:
-          print '    %s: %d/%d' % (test, num_passes, args.num_samples)
-    print '\n\n'
+          print('    %s: %d/%d' % (test, num_passes, args.num_samples))
+    print('\n\n')
 
 
 def ConvertGpuToVendorName(gpu):
@@ -193,8 +193,8 @@ def GetUnexpectedPasses(builds):
     }
   """
   retval = {}
-  for builder, buildbucket_ids in builds.iteritems():
-    print 'Querying ResultDB for builder %s' % builder
+  for builder, buildbucket_ids in builds.items():
+    print('Querying ResultDB for builder %s' % builder)
     cmd = [
         'rdb',
         'query',
@@ -235,7 +235,7 @@ def GetBuildbucketIds(args):
   """
   retval = {}
   for builder in args.builders:
-    print 'Querying BigQuery for builder %s' % builder
+    print('Querying BigQuery for builder %s' % builder)
     query = QUERY_TEMPLATE.format(builder=builder, num_samples=args.num_samples)
     cmd = [
         'bq',

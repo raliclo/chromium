@@ -13,7 +13,7 @@ import subprocess
 import sys
 
 if sys.version_info.major == 2:
-    import cPickle as pickle
+    import pickle as pickle
 else:
     import pickle
 
@@ -196,8 +196,8 @@ class ComponentInfoProviderModules(ComponentInfoProvider):
 
     @property
     def callback_functions(self):
-        return dict(self._component_info_core['callback_functions'].items() +
-                    self._component_info_modules['callback_functions'].items())
+        return dict(list(self._component_info_core['callback_functions'].items()) +
+                    list(self._component_info_modules['callback_functions'].items()))
 
     @property
     def specifier_for_export(self):
@@ -219,7 +219,7 @@ def merge_dict_recursively(target, diff):
     |target| will be updated with |diff|.  Part of |diff| may be re-used in
     |target|.
     """
-    for key, value in diff.items():
+    for key, value in list(diff.items()):
         if key not in target:
             target[key] = value
         elif type(value) == dict:
@@ -436,7 +436,7 @@ def get_interface_extended_attributes_from_idl(file_contents):
         if parences < 0 or square_brackets < 0:
             raise ValueError('You have more close braces than open braces.')
         if parences == 0 and square_brackets == 0:
-            name, _, value = map(str.strip, concatenated.partition('='))
+            name, _, value = list(map(str.strip, concatenated.partition('=')))
             extended_attributes[name] = value
             concatenated = None
     return extended_attributes

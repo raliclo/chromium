@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright (C) 2013 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -32,7 +32,7 @@ import os
 import sys
 
 if sys.version_info.major == 2:
-    import cPickle as pickle
+    import pickle as pickle
 else:
     import pickle
 

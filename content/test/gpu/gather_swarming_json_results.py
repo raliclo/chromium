@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright 2016 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -14,7 +14,7 @@ import argparse
 import json
 import logging
 import sys
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 
 
 def GetBuildData(method, request):
@@ -26,10 +26,10 @@ def GetBuildData(method, request):
   # The Python docs are wrong. It's fine for this payload to be just
   # a JSON string.
   headers = {'content-type': 'application/json', 'accept': 'application/json'}
-  url = urllib2.Request(
+  url = urllib.request.Request(
       'https://cr-buildbucket.appspot.com/prpc/buildbucket.v2.Builds/' + method,
       request, headers)
-  conn = urllib2.urlopen(url)
+  conn = urllib.request.urlopen(url)
   result = conn.read()
   conn.close()
   # Result is a multi-line string the first line of which is
@@ -78,24 +78,24 @@ def GetJsonForLatestGreenBuildSteps(bot):
 
 def JsonLoadStrippingUnicode(url):
   def StripUnicode(obj):
-    if isinstance(obj, unicode):
+    if isinstance(obj, str):
       try:
         return obj.encode('ascii')
       except UnicodeEncodeError:
         return obj
 
     if isinstance(obj, list):
-      return map(StripUnicode, obj)
+      return list(map(StripUnicode, obj))
 
     if isinstance(obj, dict):
       new_obj = type(obj)(
-          (StripUnicode(k), StripUnicode(v)) for k, v in obj.iteritems())
+          (StripUnicode(k), StripUnicode(v)) for k, v in obj.items())
       return new_obj
 
     return obj
 
   # The following fails with Python 2.7.6, but succeeds with Python 2.7.14.
-  conn = urllib2.urlopen(url + '?format=raw')
+  conn = urllib.request.urlopen(url + '?format=raw')
   result = conn.read()
   conn.close()
   return StripUnicode(json.loads(result))
@@ -121,7 +121,7 @@ def ExtractTestTimes(node, node_name, dest, delim):
   if 'times' in node:
     dest[node_name] = sum(node['times']) / len(node['times'])
   else:
-    for k in node.iterkeys():
+    for k in node.keys():
       if isinstance(node[k], dict):
         test_name = node_name + delim + k if node_name else k
         ExtractTestTimes(node[k], test_name, dest, delim)
