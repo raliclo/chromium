@@ -2,7 +2,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import HTMLParser
+import html.parser
 import json
 import logging
 import os
@@ -235,7 +235,7 @@ def ParseGTestXML(xml_content):
   if not xml_content:
     return results
 
-  html = HTMLParser.HTMLParser()
+  html = html.parser.HTMLParser()
 
   testsuites = xml.etree.ElementTree.fromstring(xml_content)
   for testsuite in testsuites:
@@ -265,7 +265,7 @@ def ParseGTestJSON(json_content):
 
   json_data = json.loads(json_content)
 
-  openstack = json_data['tests'].items()
+  openstack = list(json_data['tests'].items())
 
   while openstack:
     name, value = openstack.pop()
@@ -275,7 +275,7 @@ def ParseGTestJSON(json_content):
           'actual'] == 'PASS' else base_test_result.ResultType.FAIL
       results.append(base_test_result.BaseTestResult(name, result_type))
     else:
-      openstack += [("%s.%s" % (name, k), v) for k, v in value.iteritems()]
+      openstack += [("%s.%s" % (name, k), v) for k, v in value.items()]
 
   return results
 

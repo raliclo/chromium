@@ -10,6 +10,11 @@ import time
 
 from pylib.base import base_test_result
 
+
+def _AsText(log):
+  return log if isinstance(log, str) else log.decode('utf-8', 'replace')
+
+
 def GenerateResultsDict(test_run_results, global_tags=None):
   """Create a results dict from |test_run_results| suitable for writing to JSON.
   Args:
@@ -92,14 +97,14 @@ def GenerateResultsDict(test_run_results, global_tags=None):
       result_dict = {
           'status': r.GetType(),
           'elapsed_time_ms': r.GetDuration(),
-          'output_snippet': unicode(r.GetLog(), errors='replace'),
+          'output_snippet': _AsText(r.GetLog()),
           'losless_snippet': True,
           'output_snippet_base64': '',
           'links': r.GetLinks(),
       }
       iteration_data[r.GetName()].append(result_dict)
 
-    all_tests = all_tests.union(set(iteration_data.iterkeys()))
+    all_tests = all_tests.union(set(iteration_data.keys()))
     per_iteration_data.append(iteration_data)
 
   return {
@@ -213,7 +218,7 @@ def ParseResultsFromJson(json_results):
   results_list = []
   testsuite_runs = json_results['per_iteration_data']
   for testsuite_run in testsuite_runs:
-    for test, test_runs in testsuite_run.iteritems():
+    for test, test_runs in testsuite_run.items():
       results_list.extend(
           [base_test_result.BaseTestResult(test,
                                            string_as_status(tr['status']),

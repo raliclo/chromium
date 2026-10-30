@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright 2014 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
@@ -109,7 +109,7 @@ def main(argv):
                                extra_program_args=repr(extra_program_args),
                                noverify_flag=noverify_flag))
 
-  os.chmod(options.output, 0750)
+  os.chmod(options.output, 0o750)
 
 
 if __name__ == '__main__':

@@ -152,7 +152,7 @@ def Initialize(output_directory=None, custom_deps=None, adb_path=None):
           for dep_config in dep_configs
         }
       }
-      for dep_name, dep_configs in _DEVIL_BUILD_PRODUCT_DEPS.iteritems()
+      for dep_name, dep_configs in _DEVIL_BUILD_PRODUCT_DEPS.items()
     }
   if custom_deps:
     devil_dynamic_config['dependencies'].update(custom_deps)

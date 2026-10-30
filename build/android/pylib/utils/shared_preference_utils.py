@@ -20,10 +20,10 @@ def UnicodeToStr(data):
   """
   if isinstance(data, dict):
     return {UnicodeToStr(key): UnicodeToStr(value)
-            for key, value in data.iteritems()}
+            for key, value in data.items()}
   elif isinstance(data, list):
     return [UnicodeToStr(element) for element in data]
-  elif isinstance(data, unicode):
+  elif isinstance(data, str):
     return data.encode('utf-8')
   return data
 
@@ -80,12 +80,12 @@ def ApplySharedPreferenceSetting(shared_pref, setting):
       shared_pref.Remove(key)
     except KeyError:
       logging.warning("Attempted to remove non-existent key %s", key)
-  for key, value in setting.get('set', {}).iteritems():
+  for key, value in setting.get('set', {}).items():
     if isinstance(value, bool):
       shared_pref.SetBoolean(key, value)
-    elif isinstance(value, basestring):
+    elif isinstance(value, str):
       shared_pref.SetString(key, value)
-    elif isinstance(value, long) or isinstance(value, int):
+    elif isinstance(value, int) or isinstance(value, int):
       shared_pref.SetLong(key, value)
     elif isinstance(value, list):
       shared_pref.SetStringSet(key, value)

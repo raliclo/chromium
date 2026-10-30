@@ -488,11 +488,11 @@ class LocalDeviceGtestRun(local_device_test_run.LocalDeviceTestRun):
 
     batch_size = self._test_instance.test_launcher_batch_limit
 
-    for i in xrange(0, device_count):
+    for i in range(0, device_count):
       unbounded_shard = tests[i::device_count]
       shards += [
           unbounded_shard[j:j + batch_size]
-          for j in xrange(0, len(unbounded_shard), batch_size)
+          for j in range(0, len(unbounded_shard), batch_size)
       ]
     return shards
 

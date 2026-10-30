@@ -110,7 +110,7 @@ def OverrideColor(level, color):
   try:
     yield
   finally:
-    for formatter, prev_color in prev_colors.iteritems():
+    for formatter, prev_color in prev_colors.items():
       formatter.color_map[level] = prev_color
 
 

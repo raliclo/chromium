@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright 2013 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
@@ -38,7 +38,7 @@ from devil.utils import run_tests_helper
 
 def CreateAppData(device, old_apk, app_data, package_name):
   device.Install(old_apk)
-  raw_input('Set the application state. Once ready, press enter and '
+  input('Set the application state. Once ready, press enter and '
             'select "Backup my data" on the device.')
   device.adb.Backup(app_data, packages=[package_name])
   logging.critical('Application data saved to %s', app_data)
@@ -47,7 +47,7 @@ def TestUpdate(device, old_apk, new_apk, app_data, package_name):
   device.Install(old_apk)
   device.adb.Restore(app_data)
   # Restore command is not synchronous
-  raw_input('Select "Restore my data" on the device. Then press enter to '
+  input('Select "Restore my data" on the device. Then press enter to '
             'continue.')
   if not device.IsApplicationInstalled(package_name):
     raise Exception('Expected package %s to already be installed. '

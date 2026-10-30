@@ -1,4 +1,4 @@
-#!/usr/bin/env vpython
+#!/usr/bin/env vpython3
 #
 # Copyright 2013 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
@@ -701,7 +701,7 @@ def AddMonkeyTestOptions(parser):
 
   parser.add_argument(
       '--browser',
-      required=True, choices=constants.PACKAGE_INFO.keys(),
+      required=True, choices=list(constants.PACKAGE_INFO.keys()),
       metavar='BROWSER', help='Browser under test.')
   parser.add_argument(
       '--category',
@@ -730,7 +730,7 @@ def AddPythonTestOptions(parser):
   parser.add_argument(
       '-s', '--suite',
       dest='suite_name', metavar='SUITE_NAME',
-      choices=constants.PYTHON_UNIT_TEST_SUITES.keys(),
+      choices=list(constants.PYTHON_UNIT_TEST_SUITES.keys()),
       help='Name of the test suite to run.')
 
 
@@ -914,7 +914,7 @@ def RunTestsInPlatformMode(args, result_sink_client=None):
   with out_manager, json_finalizer():
     with json_writer(), logcats_uploader, env, test_instance, test_run:
 
-      repetitions = (xrange(args.repeat + 1) if args.repeat >= 0
+      repetitions = (range(args.repeat + 1) if args.repeat >= 0
                      else itertools.count())
       result_counts = collections.defaultdict(
           lambda: collections.defaultdict(int))

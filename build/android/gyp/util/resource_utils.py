@@ -305,7 +305,7 @@ class ResourceInfoFile(object):
     """
     entries = self._ApplyRenames()
     lines = []
-    for archive_path, source_path in entries.iteritems():
+    for archive_path, source_path in entries.items():
       lines.append('{}\t{}\n'.format(archive_path, source_path))
     with open(info_file_path, 'w') as info_file:
       info_file.writelines(sorted(lines))
@@ -567,7 +567,7 @@ def CreateRJavaFiles(srcjar_dir,
   else:
     # Create a unique name using srcjar_out. Underscores are added to ensure
     # no reserved keywords are used for directory names.
-    root_r_java_package = re.sub('[^\w\.]', '', srcjar_out.replace('/', '._'))
+    root_r_java_package = re.sub(r'[^\w\.]', '', srcjar_out.replace('/', '._'))
 
   root_r_java_dir = os.path.join(srcjar_dir, *root_r_java_package.split('.'))
   build_utils.MakeDirectory(root_r_java_dir)
@@ -648,7 +648,7 @@ def _RenderRootRJavaSource(package, all_resources_by_type, rjava_build_options,
   """Render an R.java source file. See _CreateRJaveSourceFile for args info."""
   final_resources_by_type = collections.defaultdict(list)
   non_final_resources_by_type = collections.defaultdict(list)
-  for res_type, resources in all_resources_by_type.iteritems():
+  for res_type, resources in all_resources_by_type.items():
     for entry in resources:
       # Entries in stylable that are not int[] are not actually resource ids
       # but constants.
@@ -977,7 +977,7 @@ def ParseAndroidResourceStringsFromXml(xml_data):
     raise Exception('<resources> start tag expected: ' + xml_data)
   input_data = xml_data[m.end():]
   resource_attrs = m.group(1)
-  re_namespace = re.compile('\s*(xmlns:(\w+)="([^"]+)")')
+  re_namespace = re.compile(r'\s*(xmlns:(\w+)="([^"]+)")')
   namespaces = {}
   while resource_attrs:
     m = re_namespace.match(resource_attrs)
@@ -1021,13 +1021,13 @@ def GenerateAndroidResourceStringsXml(names_to_utf8_text, namespaces=None):
   result = '<?xml version="1.0" encoding="utf-8"?>\n'
   result += '<resources'
   if namespaces:
-    for prefix, url in sorted(namespaces.iteritems()):
+    for prefix, url in sorted(namespaces.items()):
       result += ' xmlns:%s="%s"' % (prefix, url)
   result += '>\n'
   if not names_to_utf8_text:
     result += '<!-- this file intentionally empty -->\n'
   else:
-    for name, utf8_text in sorted(names_to_utf8_text.iteritems()):
+    for name, utf8_text in sorted(names_to_utf8_text.items()):
       result += '<string name="%s">"%s"</string>\n' % (name, utf8_text)
   result += '</resources>\n'
   return result
@@ -1045,17 +1045,17 @@ def FilterAndroidResourceStringsXml(xml_file_path, string_predicate):
     string_predicate: A predicate function which will receive the string name
       and shal
   """
-  with open(xml_file_path) as f:
+  with open(xml_file_path, encoding='utf-8') as f:
     xml_data = f.read()
   strings_map, namespaces = ParseAndroidResourceStringsFromXml(xml_data)
 
   string_deletion = False
-  for name in strings_map.keys():
+  for name in list(strings_map.keys()):
     if not string_predicate(name):
       del strings_map[name]
       string_deletion = True
 
   if string_deletion:
     new_xml_data = GenerateAndroidResourceStringsXml(strings_map, namespaces)
-    with open(xml_file_path, 'wb') as f:
+    with open(xml_file_path, 'w', encoding='utf-8') as f:
       f.write(new_xml_data)

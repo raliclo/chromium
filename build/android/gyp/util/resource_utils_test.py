@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # coding: utf-8
 # Copyright 2018 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
@@ -171,7 +171,7 @@ class ResourceUtilsTest(unittest.TestCase):
         'yi': 'ji'
     }
     for chromium_locale, android_locale in \
-        _TEST_CHROMIUM_TO_ANDROID_LOCALE_MAP.iteritems():
+        _TEST_CHROMIUM_TO_ANDROID_LOCALE_MAP.items():
       result = resource_utils.ToAndroidLocaleName(chromium_locale)
       self.assertEqual(result, android_locale)
 
@@ -209,7 +209,7 @@ class ResourceUtilsTest(unittest.TestCase):
         'no': 'nb',  # http://crbug.com/920960
     }
     for android_locale, chromium_locale in \
-        _TEST_ANDROID_TO_CHROMIUM_LOCALE_MAP.iteritems():
+        _TEST_ANDROID_TO_CHROMIUM_LOCALE_MAP.items():
       result = resource_utils.ToChromiumLocaleName(android_locale)
       self.assertEqual(result, chromium_locale)
 

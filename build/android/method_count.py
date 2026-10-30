@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python3
 # Copyright 2015 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -27,10 +27,10 @@ _CONTRIBUTORS_TO_DEX_CACHE = {
 
 def _ExtractSizesFromDexFile(dexfile):
   count_by_item = {}
-  for item_name, readable_name in _CONTRIBUTORS_TO_DEX_CACHE.iteritems():
+  for item_name, readable_name in _CONTRIBUTORS_TO_DEX_CACHE.items():
     count_by_item[readable_name] = getattr(dexfile.header, item_name)
   return count_by_item, sum(
-      count_by_item[x] for x in _CONTRIBUTORS_TO_DEX_CACHE.itervalues()) * 4
+      count_by_item[x] for x in _CONTRIBUTORS_TO_DEX_CACHE.values()) * 4
 
 
 def ExtractSizesFromZip(path):
@@ -44,11 +44,11 @@ def ExtractSizesFromZip(path):
       dexfile_name = os.path.basename(subpath)
       dexfiles[dexfile_name] = dex_parser.DexFile(bytearray(z.read(subpath)))
 
-  for dexfile_name, dexfile in dexfiles.iteritems():
+  for dexfile_name, dexfile in dexfiles.items():
     cur_dex_counts, cur_dexcache_size = _ExtractSizesFromDexFile(dexfile)
     dex_counts_by_file[dexfile_name] = cur_dex_counts
     dexcache_size += cur_dexcache_size
-  num_unique_methods = dex_parser.CountUniqueDexMethods(dexfiles.values())
+  num_unique_methods = dex_parser.CountUniqueDexMethods(list(dexfiles.values()))
   return dex_counts_by_file, dexcache_size, num_unique_methods
 
 
@@ -68,8 +68,8 @@ def main():
     num_unique_methods = single_set_of_sizes['methods']
 
   file_basename = os.path.basename(args.filename)
-  for classes_dex_file, classes_dex_sizes in sizes.iteritems():
-    for readable_name in _CONTRIBUTORS_TO_DEX_CACHE.itervalues():
+  for classes_dex_file, classes_dex_sizes in sizes.items():
+    for readable_name in _CONTRIBUTORS_TO_DEX_CACHE.values():
       if readable_name in classes_dex_sizes:
         perf_tests_results_helper.PrintPerfResult(
             '%s_%s_%s' % (file_basename, classes_dex_file, readable_name),

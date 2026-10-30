@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright 2018 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -109,7 +109,7 @@ STACK CFI 3b93218 .cfa: r7 16 + .ra: .cfa -4 + ^
 
         func_start = index + 1
         func_end = func_start + unw_data[index] * 2
-        self.assertEquals(
+        self.assertEqual(
             len(expected_cfi_data[func_addr]), func_end - func_start)
         func_cfi = unw_data[func_start : func_end]
         self.assertEqual(expected_cfi_data[func_addr], func_cfi)

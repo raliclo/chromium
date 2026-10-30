@@ -124,7 +124,7 @@ def AssertPackage(manifest_node, package):
 
 def _SortAndStripElementTree(root):
   def sort_key(node):
-    ret = ElementTree.tostring(node)
+    ret = ElementTree.tostring(node, encoding='unicode')
     # ElementTree.tostring inserts namespace attributes for any that are needed
     # for the node or any of its descendants. Remove them so as to prevent a
     # change to a child that adds/removes a namespace usage from changing sort
@@ -205,7 +205,7 @@ def _CreateNodeHash(lines):
     assert False, 'Did not find end of node:\n' + '\n'.join(lines)
 
   # Insecure and truncated hash as it only needs to be unique vs. its neighbors.
-  return hashlib.md5('\n'.join(tag_lines)).hexdigest()[:8]
+  return hashlib.md5('\n'.join(tag_lines).encode('utf-8')).hexdigest()[:8]
 
 
 def _IsSelfClosing(lines):
@@ -262,7 +262,7 @@ def NormalizeManifest(manifest_contents):
   # during normalization.
   app_node = root.find('application')
   if app_node is not None:
-    for node in app_node.getchildren():
+    for node in list(app_node):
       if (node.tag in ['uses-static-library', 'static-library']
           and '{%s}version' % ANDROID_NAMESPACE in node.keys()
           and '{%s}name' % ANDROID_NAMESPACE in node.keys()):
@@ -274,20 +274,28 @@ def NormalizeManifest(manifest_contents):
     for key in node.keys():
       node.set(key, node.get(key).replace(package, '$PACKAGE'))
 
-    for child in node.getchildren():
+    for child in list(node):
       blur_package_name(child)
 
   # We only blur the package names of non-root nodes because they generate a lot
   # of diffs when doing manifest checks for upstream targets. We still want to
   # have 1 piece of package name not blurred just in case the package name is
   # mistakenly changed.
-  for child in root.getchildren():
+  for child in list(root):
     blur_package_name(child)
 
   _SortAndStripElementTree(root)
 
   # Fix up whitespace/indentation.
   dom = minidom.parseString(ElementTree.tostring(root))
+  # Python 3.8+ keeps attributes in insertion order and writes namespace
+  # declarations first; sort them by name as Python 2 did.
+  for element in dom.getElementsByTagName('*'):
+    attrs = sorted(element.attributes.items())
+    for name, _ in attrs:
+      element.removeAttribute(name)
+    for name, value in attrs:
+      element.setAttribute(name, value)
   out_lines = []
   for l in dom.toprettyxml(indent='  ').splitlines():
     if not l or l.isspace():

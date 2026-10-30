@@ -1,4 +1,4 @@
-#!/usr/bin/env vpython
+#!/usr/bin/env vpython3
 #
 # Copyright 2018 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
@@ -81,9 +81,15 @@ class Method(object):
     return 'Method<{}->{}({}){}>'.format(self.class_name, self.name,
         self.param_types or '', self.return_type or '')
 
-  def __cmp__(self, other):
-    return cmp((self.class_name, self.name, self.param_types, self.return_type),
-        (other.class_name, other.name, other.param_types, other.return_type))
+  def _key(self):
+    return (self.class_name or '', self.name or '', self.param_types or '',
+            self.return_type or '')
+
+  def __eq__(self, other):
+    return self._key() == other._key()
+
+  def __lt__(self, other):
+    return self._key() < other._key()
 
   def __hash__(self):
     # only hash name and class_name since other fields may not be set yet.

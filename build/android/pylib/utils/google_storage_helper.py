@@ -13,7 +13,7 @@ import logging
 import os
 import sys
 import time
-import urlparse
+import urllib.parse
 
 from pylib.constants import host_paths
 from pylib.utils import decorators
@@ -67,7 +67,7 @@ def upload(name, filepath, bucket, gs_args=None, command_args=None,
 def read_from_link(link):
   # Note that urlparse returns the path with an initial '/', so we only need to
   # add one more after the 'gs;'
-  gs_path = 'gs:/%s' % urlparse.urlparse(link).path
+  gs_path = 'gs:/%s' % urllib.parse.urlparse(link).path
   cmd = [_GSUTIL_PATH, '-q', 'cat', gs_path]
   return cmd_helper.GetCmdOutput(cmd)
 

@@ -6,7 +6,7 @@ import fnmatch
 import logging
 import posixpath
 import signal
-import thread
+import _thread
 import threading
 
 from devil import base_error
@@ -65,7 +65,7 @@ class LocalDeviceTestRun(test_run.TestRun):
       consecutive_device_errors = 0
       for test in tests:
         if exit_now.isSet():
-          thread.exit()
+          _thread.exit()
 
         result = None
         rerun = None
@@ -221,13 +221,13 @@ class LocalDeviceTestRun(test_run.TestRun):
       if name.endswith('*'):
         tests_and_results[name] = (
             test,
-            [r for n, r in all_test_results.iteritems()
+            [r for n, r in all_test_results.items()
              if fnmatch.fnmatch(n, name)])
       else:
         tests_and_results[name] = (test, all_test_results.get(name))
 
     failed_tests_and_results = (
-        (test, result) for test, result in tests_and_results.itervalues()
+        (test, result) for test, result in tests_and_results.values()
         if is_failure_result(result)
     )
 

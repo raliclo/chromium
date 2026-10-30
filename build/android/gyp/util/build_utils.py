@@ -12,7 +12,7 @@ import fnmatch
 import json
 import logging
 import os
-import pipes
+import shlex
 import re
 import shutil
 import stat
@@ -39,7 +39,7 @@ RT_JAR_PATH = os.path.join(DIR_SOURCE_ROOT, 'third_party', 'jdk', 'extras',
                            'java_8', 'jre', 'lib', 'rt.jar')
 
 try:
-  string_types = basestring
+  string_types = str
 except NameError:
   string_types = (str, bytes)
 
@@ -198,7 +198,7 @@ class CalledProcessError(Exception):
     # A user should be able to simply copy and paste the command that failed
     # into their shell.
     copyable_command = '( cd {}; {} )'.format(os.path.abspath(self.cwd),
-        ' '.join(map(pipes.quote, self.args)))
+        ' '.join(map(shlex.quote, self.args)))
     return 'Command failed: {}\n{}'.format(copyable_command, self.output)
 
 
@@ -630,7 +630,7 @@ def ExpandFileArgs(args):
   """
   new_args = list(args)
   file_jsons = dict()
-  r = re.compile('@FileArg\((.*?)\)')
+  r = re.compile(r'@FileArg\((.*?)\)')
   for i, arg in enumerate(args):
     match = r.search(arg)
     if not match:

@@ -64,9 +64,13 @@ class BaseTestResult(object):
   def __repr__(self):
     return self._name
 
-  def __cmp__(self, other):
+  def __eq__(self, other):
     # pylint: disable=W0212
-    return cmp(self._name, other._name)
+    return self._name == other._name
+
+  def __lt__(self, other):
+    # pylint: disable=W0212
+    return self._name < other._name
 
   def __hash__(self):
     return hash(self._name)
@@ -139,7 +143,7 @@ class TestRunResults(object):
             log = t.GetLog()
             if log:
               s.append('[%s] %s:' % (test_type, t))
-              s.append(unicode(log, 'utf-8'))
+              s.append(log if isinstance(log, str) else log.decode('utf-8'))
       return '\n'.join(s)
 
   def GetGtestForm(self):

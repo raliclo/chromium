@@ -121,7 +121,7 @@ def DidPackageCrashOnDevice(package_name, device):
   # Dismiss any error dialogs. Limit the number in case we have an error
   # loop or we are failing to dismiss.
   try:
-    for _ in xrange(10):
+    for _ in range(10):
       package = device.DismissCrashDialogIfNeeded(timeout=10, retries=1)
       if not package:
         return False
@@ -492,7 +492,7 @@ class LocalDeviceInstrumentationTestRun(
         other_tests.append(test)
 
     all_tests = []
-    for _, tests in batched_tests.items():
+    for _, tests in list(batched_tests.items()):
       tests.sort()  # Ensure a consistent ordering across external shards.
       all_tests.extend([
           tests[i:i + _TEST_BATCH_MAX_GROUP_SIZE]
@@ -558,7 +558,7 @@ class LocalDeviceInstrumentationTestRun(
         i = self._GetTimeoutFromAnnotations(t['annotations'], n)
         return (n, i)
 
-      test_names, timeouts = zip(*(name_and_timeout(t) for t in test))
+      test_names, timeouts = list(zip(*(name_and_timeout(t) for t in test)))
 
       test_name = instrumentation_test_instance.GetTestName(test[0]) + '_batch'
       extras['class'] = ','.join(test_names)

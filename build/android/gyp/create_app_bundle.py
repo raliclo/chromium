@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright 2018 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
@@ -331,7 +331,7 @@ def _GenerateBaseResourcesAllowList(base_module_rtxt_path,
   """
   ids_map = resource_utils.GenerateStringResourcesAllowList(
       base_module_rtxt_path, base_allowlist_rtxt_path)
-  return ids_map.keys()
+  return list(ids_map.keys())
 
 
 def _ConcatTextFiles(in_paths, out_path):
@@ -386,7 +386,7 @@ def _WriteBundlePathmap(module_pathmap_paths, module_names,
       if not os.path.exists(module_pathmap_path):
         continue
       module_pathmap = _LoadPathmap(module_pathmap_path)
-      for short_path, long_path in module_pathmap.iteritems():
+      for short_path, long_path in module_pathmap.items():
         rebased_long_path = '{}/{}'.format(module_name, long_path)
         rebased_short_path = '{}/{}'.format(module_name, short_path)
         line = '{} -> {}\n'.format(rebased_long_path, rebased_short_path)
@@ -432,11 +432,11 @@ def _MaybeCheckServicesPresentInBase(bundle_path, module_zips):
   classes = set()
   base_package_name = manifest_utils.GetPackage(base_manifest)
   for package in dexdump.Dump(base_zip):
-    for name, package_dict in package.items():
+    for name, package_dict in list(package.items()):
       if not name:
         name = base_package_name
       classes.update('%s.%s' % (name, c)
-                     for c in package_dict['classes'].keys())
+                     for c in list(package_dict['classes'].keys()))
 
   ignored_service_names = {
       # Defined in the chime DFM manifest, but unused.

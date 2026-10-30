@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright 2017 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -13,7 +13,6 @@ import collections
 import json
 import logging
 import os
-import pipes
 import posixpath
 import random
 import re
@@ -321,7 +320,7 @@ def _RunGdb(device, package_name, debug_process_name, pid, output_directory,
     cmd.append('--verbose')
   if target_cpu:
     cmd.append('--target-arch=%s' % _TargetCpuToTargetArch(target_cpu))
-  logging.warning('Running: %s', ' '.join(pipes.quote(x) for x in cmd))
+  logging.warning('Running: %s', ' '.join(shlex.quote(x) for x in cmd))
   print(_Colorize('All subsequent output is from adb_gdb script.',
                   colorama.Fore.YELLOW))
   os.execv(gdb_script_path, cmd)
@@ -525,14 +524,14 @@ def _RunDiskUsage(devices, package_name):
               odex_paths.append('/data/dalvik-cache/%s@classes%s.dex' % (
                   mangled_apk_path, suffix))
 
-    odex_sizes = _DuHelper(d, ' '.join(pipes.quote(p) for p in odex_paths))
+    odex_sizes = _DuHelper(d, ' '.join(shlex.quote(p) for p in odex_paths))
 
     return (data_dir_sizes, code_cache_sizes, apk_sizes, lib_sizes, odex_sizes,
             compilation_filter)
 
   def print_sizes(desc, sizes):
-    print('%s: %d KiB' % (desc, sum(sizes.itervalues())))
-    for path, size in sorted(sizes.iteritems()):
+    print('%s: %d KiB' % (desc, sum(sizes.values())))
+    for path, size in sorted(sizes.items()):
       print('    %s: %s KiB' % (path, size))
 
   parallel_devices = device_utils.DeviceUtils.parallel(devices)
@@ -544,7 +543,7 @@ def _RunDiskUsage(devices, package_name):
 
     (data_dir_sizes, code_cache_sizes, apk_sizes, lib_sizes, odex_sizes,
      compilation_filter) = result
-    total = sum(sum(sizes.itervalues()) for sizes in result[:-1])
+    total = sum(sum(sizes.values()) for sizes in result[:-1])
 
     print_sizes('Apk', apk_sizes)
     print_sizes('App Data (non-code cache)', data_dir_sizes)
@@ -1001,7 +1000,7 @@ def _DisplayArgs(devices, command_line_flags_file):
   print('Existing flags per-device (via /data/local/tmp/{}):'.format(
       command_line_flags_file))
   for flags in _PrintPerDeviceOutput(devices, outputs, single_line=True):
-    quoted_flags = ' '.join(pipes.quote(f) for f in flags)
+    quoted_flags = ' '.join(shlex.quote(f) for f in flags)
     print(quoted_flags or 'No flags set.')
 
 

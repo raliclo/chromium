@@ -2,7 +2,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 import base64
-import cgi
+import html
 import json
 import os
 
@@ -78,7 +78,7 @@ class ResultSinkClient(object):
 
     # Slightly smaller to allow addition of <pre> tags and message.
     report_check_size = MAX_REPORT_LEN - 45
-    test_log_formatted = cgi.escape(test_log)
+    test_log_formatted = html.escape(test_log)
     if len(test_log) > report_check_size:
       test_log_formatted = ('<pre>' + test_log[:report_check_size] +
                             '...Full output in Artifact.</pre>')

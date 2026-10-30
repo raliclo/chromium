@@ -8,7 +8,7 @@ import logging
 import multiprocessing
 import os
 import posixpath
-import Queue
+import queue
 import re
 import subprocess
 import sys
@@ -293,7 +293,7 @@ class ELFSymbolizer(object):
 
           try:
             lines = self._out_queue.get(block=True, timeout=0.25)
-          except Queue.Empty:
+          except queue.Empty:
             # On timeout (1/4 s.) repeat the inner loop and check if either the
             # addr2line process did crash or we waited its output for too long.
             continue
@@ -314,7 +314,7 @@ class ELFSymbolizer(object):
       while True:
         try:
           lines = self._out_queue.get_nowait()
-        except Queue.Empty:
+        except queue.Empty:
           break
         self._ProcessSymbolOutput(lines)
 
@@ -405,7 +405,7 @@ class ELFSymbolizer(object):
       # The only reason of existence of this Queue (and the corresponding
       # Thread below) is the lack of a subprocess.stdout.poll_avail_lines().
       # Essentially this is a pipe able to extract a couple of lines atomically.
-      self._out_queue = Queue.Queue()
+      self._out_queue = queue.Queue()
 
       # Start the underlying addr2line process in line buffered mode.
 

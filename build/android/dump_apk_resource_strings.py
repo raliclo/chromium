@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # encoding: utf-8
 # Copyright 2019 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
@@ -220,7 +220,7 @@ class ResourceStringValues(object):
   def ToStringList(self, res_id):
     """Convert entry to string list for human-friendly output."""
     values = sorted(
-        [(str(config), value) for config, value in self.res_values.iteritems()])
+        [(str(config), value) for config, value in self.res_values.items()])
     if res_id is None:
       # res_id will be None when the resource ID should not be part
       # of the output.
@@ -256,7 +256,7 @@ class ResourceStringMap(object):
 
   def RemapResourceNames(self, id_name_map):
     """Rename all entries according to a given {res_id -> res_name} map."""
-    for res_id, res_name in id_name_map.iteritems():
+    for res_id, res_name in id_name_map.items():
       if res_id in self._res_map:
         self._res_map[res_id].res_name = res_name
 
@@ -278,15 +278,9 @@ class ResourceStringMap(object):
     result = ['Resource strings (count=%d) {' % len(self._res_map)]
     res_map = self._res_map
 
-    # A small function to compare two (res_id, values) tuples
-    # by resource name first, then resource ID.
-    def cmp_id_name(a, b):
-      result = cmp(a[1].res_name, b[1].res_name)
-      if result == 0:
-        result = cmp(a[0], b[0])
-      return result
-
-    for res_id, _ in sorted(res_map.iteritems(), cmp=cmp_id_name):
+    # Sort (res_id, values) tuples by resource name first, then resource ID.
+    for res_id, _ in sorted(res_map.items(),
+                            key=lambda x: (x[1].res_name, x[0])):
       result += res_map[res_id].ToStringList(None if omit_ids else res_id)
     result.append('}  # Resource strings')
     return result
@@ -386,7 +380,7 @@ assert _RE_BUNDLE_STRING_DEFAULT_VALUE.match(
 _RE_BUNDLE_STRING_LOCALIZED_VALUE = re.compile(
     r'^\s+locale: "([0-9a-zA-Z-]+)" - \[STR\] "(.*)"$')
 assert _RE_BUNDLE_STRING_LOCALIZED_VALUE.match(
-    u'        locale: "ar" - [STR] "گزینه\u200cهای بیشتر"'.encode('utf-8'))
+    '        locale: "ar" - [STR] "گزینه\u200cهای بیشتر"'.encode('utf-8'))
 
 
 def ParseBundleResources(bundle_tool_jar_path, bundle_path):

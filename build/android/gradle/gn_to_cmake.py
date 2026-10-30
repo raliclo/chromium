@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright 2016 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -299,7 +299,7 @@ def WriteActionForEach(out, target, project, sources, synthetic_dependencies):
   all_outputs = target.properties.get('outputs', [])
   inputs = target.properties.get('sources', [])
   # TODO: consider expanding 'output_patterns' instead.
-  outputs_per_input = len(all_outputs) / len(inputs)
+  outputs_per_input = len(all_outputs) // len(inputs)
   for count, source in enumerate(inputs):
     source_abs_path = project.GetAbsolutePath(source)
 
