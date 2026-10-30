@@ -1,4 +1,4 @@
-#!/usr/bin/env vpython
+#!/usr/bin/env vpython3
 # Copyright 2015 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -121,7 +121,7 @@ def main(args):
     deps[benchmark.Name()] = _FetchDepsForBenchmark(benchmark)
   else:
     if not options.force:
-      raw_input(
+      input(
           'No benchmark name is specified. Fetching all benchmark deps. '
           'Press enter to continue...')
     for b in benchmark_finders.GetOfficialBenchmarks():

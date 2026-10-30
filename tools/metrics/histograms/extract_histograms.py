@@ -61,8 +61,8 @@ import datetime
 import itertools
 
 try:
-  import HTMLParser
-  html = HTMLParser.HTMLParser()
+  import html.parser
+  html = html.parser.HTMLParser()
 except ImportError:  # For Py3 compatibility
   import html
 
@@ -207,7 +207,7 @@ def _NormalizeAllAttributeValues(node):
     The normalized minidom node.
   """
   if node.nodeType == _ELEMENT_NODE:
-    for a in node.attributes.keys():
+    for a in list(node.attributes.keys()):
       node.attributes[a].value = NormalizeString(node.attributes[a].value)
 
   for c in node.childNodes:
@@ -899,7 +899,7 @@ def _GenerateNewHistogramsFromTokens(histogram_name, histograms_dict,
     token_name_pairings = {}
     token_summary_pairings = {}
 
-    for token_key, variant in token_assignment.pairings.items():
+    for token_key, variant in list(token_assignment.pairings.items()):
       token_name_pairings[token_key] = variant['name']
       token_summary_pairings[token_key] = variant['summary']
 
@@ -957,7 +957,7 @@ def _UpdateHistogramsWithTokens(histograms_dict):
   # Create new dict instead of modify in place because newly generated
   # histograms will be added when iterating through |histograms_dict|.
   new_histograms_dict = {}
-  for histogram_name, histogram_node in histograms_dict.items():
+  for histogram_name, histogram_node in list(histograms_dict.items()):
     if 'tokens' in histogram_node:
       have_error = have_error or _GenerateNewHistogramsFromTokens(
           histogram_name, histograms_dict, new_histograms_dict)
@@ -1042,4 +1042,4 @@ def ExtractNames(histograms):
 
 def ExtractObsoleteNames(histograms):
   return sorted(
-      filter(lambda name: histograms[name].get("obsolete"), histograms.keys()))
+      [name for name in list(histograms.keys()) if histograms[name].get("obsolete")])

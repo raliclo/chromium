@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright 2019 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -17,7 +17,7 @@ import glob
 import io
 import json
 import os
-import pipes
+import shlex
 import re
 import shutil
 import subprocess
@@ -97,12 +97,12 @@ def RunCommand(command, msvc_arch=None, env=None, fail_hard=True):
   #
   # We want to pass additional arguments to command[0], not to the shell,
   # so manually join everything into a single string.
-  # Annoyingly, for "svn co url c:\path", pipes.quote() thinks that it should
+  # Annoyingly, for "svn co url c:\path", shlex.quote() thinks that it should
   # quote c:\path but svn can't handle quoted paths on Windows.  Since on
   # Windows follow-on args are passed to args[0] instead of the shell, don't
   # do the single-string transformation there.
   if sys.platform != 'win32':
-    command = ' '.join([pipes.quote(c) for c in command])
+    command = ' '.join([shlex.quote(c) for c in command])
   print('Running', command)
   if subprocess.call(command, env=env, shell=True) == 0:
     return True

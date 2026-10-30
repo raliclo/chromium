@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright (c) 2012 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
@@ -25,7 +25,7 @@ from __future__ import print_function
 
 __author__ = 'evanm (Evan Martin)'
 
-from HTMLParser import HTMLParser
+from html.parser import HTMLParser
 import logging
 import os
 import re
@@ -372,7 +372,7 @@ def GrepForActions(path, actions):
       if not action_name:
         break
       actions.add(action_name)
-    except InvalidStatementException, e:
+    except InvalidStatementException as e:
       logging.warning(str(e))
 
   if action_re != USER_METRICS_ACTION_RE:
@@ -439,7 +439,7 @@ def GrepForWebUIActions(path, actions):
     # ensure the path of the file being parsed gets printed if that happens.
     close_called = True
     parser.close()
-  except Exception, e:
+  except Exception as e:
     print("Error encountered for path %s" % path)
     raise e
   finally:
@@ -468,7 +468,7 @@ def GrepForDevToolsActions(path, actions):
       if not action_name:
         break
       actions.add(action_name)
-    except InvalidStatementException, e:
+    except InvalidStatementException as e:
       logging.warning(str(e))
 
 def WalkDirectory(root_path, actions, extensions, callback):

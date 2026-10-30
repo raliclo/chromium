@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # Copyright 2018 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -20,7 +20,7 @@ import contextlib
 import os
 import subprocess
 import sys
-import urllib2
+import urllib.request
 
 GS_HTTP_URL = 'https://storage.googleapis.com'
 
@@ -47,7 +47,8 @@ def WriteLocalProfileName(name, local_profile_name_path):
 
 
 def CheckCallOrExit(cmd):
-  proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+  proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                          universal_newlines=True)
   stdout, stderr = proc.communicate()
   exit_code = proc.wait()
   if not exit_code:
@@ -80,7 +81,7 @@ def RetrieveProfile(desired_profile_name, out_path, gs_url_base):
   else:
     gs_url = '/'.join([GS_HTTP_URL, desired_profile_name[len(gs_prefix):]])
 
-  with contextlib.closing(urllib2.urlopen(gs_url)) as u:
+  with contextlib.closing(urllib.request.urlopen(gs_url)) as u:
     with open(out_path, 'wb') as f:
       while True:
         buf = u.read(4096)

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright 2014 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -21,7 +21,7 @@ from update_histogram_enum import UpdateHistogramEnum
 
 def PrintEnumForDashboard(enum_dict):
   """Prints enum_items formatted for use in uma.py of Chromium dashboard."""
-  for key in sorted(enum_dict.iterkeys()):
+  for key in sorted(enum_dict.keys()):
     print('  %d: \'%s\',' % (key, enum_dict[key]))
 
 

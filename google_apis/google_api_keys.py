@@ -26,7 +26,7 @@ def _GetTokenFromOfficialFile(token_name):
   if not os.path.isfile(official_path):
     return None
 
-  line_regexp = '^#define\s*%s\s*"([^"]+)"' % token_name
+  line_regexp = r'^#define\s*%s\s*"([^"]+)"' % token_name
   line_pattern = re.compile(line_regexp)
   def ParseLine(current_line):
     result = line_pattern.match(current_line)
@@ -86,15 +86,15 @@ def GetClientSecret(client_name):
 
 
 if __name__ == "__main__":
-  print 'GOOGLE_API_KEY=%s' % GetAPIKey()
-  print 'GOOGLE_CLIENT_ID_MAIN=%s' % GetClientID('MAIN')
-  print 'GOOGLE_CLIENT_SECRET_MAIN=%s' % GetClientSecret('MAIN')
-  print 'GOOGLE_CLIENT_ID_CLOUD_PRINT=%s' % GetClientID('CLOUD_PRINT')
-  print 'GOOGLE_CLIENT_SECRET_CLOUD_PRINT=%s' % GetClientSecret('CLOUD_PRINT')
-  print 'GOOGLE_CLIENT_ID_REMOTING=%s' % GetClientID('REMOTING')
-  print 'GOOGLE_CLIENT_SECRET_REMOTING=%s' % GetClientSecret('REMOTING')
-  print 'GOOGLE_CLIENT_ID_REMOTING_HOST=%s' % GetClientID('REMOTING_HOST')
-  print 'GOOGLE_CLIENT_SECRET_REMOTING_HOST=%s' % GetClientSecret(
-      'REMOTING_HOST')
-  print 'GOOGLE_CLIENT_ID_REMOTING_IDENTITY_API=%s' %GetClientID(
-      'REMOTING_IDENTITY_API')
+  print('GOOGLE_API_KEY=%s' % GetAPIKey())
+  print('GOOGLE_CLIENT_ID_MAIN=%s' % GetClientID('MAIN'))
+  print('GOOGLE_CLIENT_SECRET_MAIN=%s' % GetClientSecret('MAIN'))
+  print('GOOGLE_CLIENT_ID_CLOUD_PRINT=%s' % GetClientID('CLOUD_PRINT'))
+  print('GOOGLE_CLIENT_SECRET_CLOUD_PRINT=%s' % GetClientSecret('CLOUD_PRINT'))
+  print('GOOGLE_CLIENT_ID_REMOTING=%s' % GetClientID('REMOTING'))
+  print('GOOGLE_CLIENT_SECRET_REMOTING=%s' % GetClientSecret('REMOTING'))
+  print('GOOGLE_CLIENT_ID_REMOTING_HOST=%s' % GetClientID('REMOTING_HOST'))
+  print('GOOGLE_CLIENT_SECRET_REMOTING_HOST=%s' % GetClientSecret(
+      'REMOTING_HOST'))
+  print('GOOGLE_CLIENT_ID_REMOTING_IDENTITY_API=%s' %GetClientID(
+      'REMOTING_IDENTITY_API'))

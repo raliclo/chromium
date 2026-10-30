@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright (c) 2013 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -283,7 +283,7 @@ def _ApplyEdits(edits):
   edit_count = 0
   error_count = 0
   done_files = 0
-  for k, v in edits.iteritems():
+  for k, v in edits.items():
     tmp_edit_count, tmp_error_count = _ApplyEditsToSingleFile(k, v)
     edit_count += tmp_edit_count
     error_count += tmp_error_count
@@ -356,7 +356,7 @@ def main():
   filenames = set(_GetFilesFromGit(args.path_filter))
   edits = _ParseEditsFromStdin(args.p)
   return _ApplyEdits(
-      {k: v for k, v in edits.iteritems()
+      {k: v for k, v in edits.items()
             if os.path.realpath(k) in filenames})
 
 

@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python3
 # Copyright (c) 2020 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -30,7 +30,7 @@ from tempfile import NamedTemporaryFile
 # which is like long in Python 2.  So we check if long is defined, and, if not,
 # define it to be the same as int.
 try:
-  long
+  int
 except NameError:
   long = int
 
@@ -124,13 +124,13 @@ def names_in_archive(path):
       f.seek(32, io.SEEK_CUR)
       m = re.match(b'/([0-9]+)', file_id)
       if long_names and m:
-        name_pos = long(m.group(1))
+        name_pos = int(m.group(1))
         name_end = long_names.find(b'/\n', name_pos)
         name = long_names[name_pos:name_end]
       else:
         name = file_id
       try:
-        size = long(f.read(10))
+        size = int(f.read(10))
       except:
         sys.stderr.write('While parsing %r, pos %r\n' % (path, f.tell()))
         raise

@@ -25,8 +25,8 @@ _SUMMARY_TYPE = models.TextNodeType('summary')
 _METRIC_TYPE =  models.ObjectNodeType(
     'metric',
     attributes=[
-      ('name', unicode, r'^[A-Za-z0-9_.]+$'),
-      ('kind', unicode, r'^(?i)(|hashed-string|int)$'),
+      ('name', str, r'^[A-Za-z0-9_.]+$'),
+      ('kind', str, r'^(?i)(|hashed-string|int)$'),
     ],
     alphabetization=[
         (_OBSOLETE_TYPE.tag, lambda _: 1),
@@ -41,8 +41,8 @@ _METRIC_TYPE =  models.ObjectNodeType(
 _EVENT_TYPE = models.ObjectNodeType(
     'event',
     attributes=[
-        ('name', unicode, r'^[A-Z][A-Za-z0-9.]*$'),
-        ('project', unicode, r'^([A-Z][A-Za-z0-9.]*)?$'),
+        ('name', str, r'^[A-Z][A-Za-z0-9.]*$'),
+        ('project', str, r'^([A-Z][A-Za-z0-9.]*)?$'),
     ],
     alphabetization=[
         (_OBSOLETE_TYPE.tag, lambda _: 1),
@@ -70,7 +70,7 @@ _EVENTS_TYPE = models.ObjectNodeType(
 _PROJECT_TYPE = models.ObjectNodeType(
     'project',
     attributes=[
-        ('name', unicode, r'^[A-Z][A-Za-z0-9.]*$'),
+        ('name', str, r'^[A-Z][A-Za-z0-9.]*$'),
     ],
     alphabetization=[
         (_OBSOLETE_TYPE.tag, lambda _: 1),

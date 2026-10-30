@@ -57,10 +57,10 @@ class ModeVariables:
         return self.variables[name][self._default_mode]
 
     def keys(self):
-        return self.variables.keys()
+        return list(self.variables.keys())
 
     def items(self):
-        return self.variables.items()
+        return list(self.variables.items())
 
     def __getitem__(self, key):
         return self.variables[key]
@@ -113,7 +113,7 @@ class BaseGenerator:
         self._SetVariableContext(name, context)
         try:
             # Python3's unicode class is just 'str'.
-            strtype = str if sys.version_info >= (3, ) else basestring
+            strtype = str if sys.version_info >= (3, ) else str
 
             if isinstance(value_obj, strtype):
                 self.model[VariableType.COLOR].Add(self._default_mode, name,
@@ -149,7 +149,7 @@ class BaseGenerator:
         generator_context = data.get('options', {}).get(self.GetName(), None)
         self.in_file_to_context[in_file] = generator_context
 
-        for name, value in data['colors'].items():
+        for name, value in list(data['colors'].items()):
             if not re.match('^[a-z0-9_]+$', name):
                 raise ValueError(
                     '%s is not a valid variable name (lower case, 0-9, _)' %
@@ -181,8 +181,8 @@ class BaseGenerator:
 
         # Check all colors in all modes refer to colors that exist in the
         # default mode.
-        for name, mode_values in colors.variables.items():
-            for mode, value in mode_values.items():
+        for name, mode_values in list(colors.variables.items()):
+            for mode, value in list(mode_values.items()):
                 CheckColorInDefaultMode(name)
                 if value.var:
                     CheckColorInDefaultMode(value.var)

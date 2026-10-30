@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright 2019 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -26,10 +26,8 @@ import stat
 import subprocess
 import sys
 
-try:
-  import urllib2 as urllib
-except ImportError:
-  import urllib.request as urllib
+import urllib.error
+import urllib.request
 
 import zipfile
 
@@ -97,8 +95,8 @@ def main():
   url = 'https://chrome-infra-packages.appspot.com/dl/gn/gn/%s/+/%s' % (
       platform, args.version)
   try:
-    zipdata = urllib.urlopen(url).read()
-  except urllib.HTTPError as e:
+    zipdata = urllib.request.urlopen(url).read()
+  except urllib.error.HTTPError as e:
     print('Failed to download the package from %s: %d %s' % (
         url, e.code, e.reason))
     return 1

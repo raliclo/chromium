@@ -69,7 +69,7 @@ def GetChildrenByTag(node, tag):
   return [child for child in node.childNodes if child.nodeName == tag]
 
 
-class NodeType(object):
+class NodeType(object, metaclass=abc.ABCMeta):
   """Base type for a type of XML node.
 
   Args:
@@ -82,7 +82,6 @@ class NodeType(object):
        the children that should be sorted, and the functions to get sort keys
        from xml nodes.
   """
-  __metaclass__ = abc.ABCMeta
 
   def __init__(self, tag,
                indent=True,

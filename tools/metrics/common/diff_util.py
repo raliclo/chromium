@@ -42,7 +42,7 @@ def PromptUserToAcceptDiff(old_text, new_text, prompt):
     temp.close()  # Close the file so the browser process can access it.
     webbrowser.open('file://' + temp.name)
     print(prompt)
-    response = raw_input('(Y/n): ').strip().lower()
+    response = input('(Y/n): ').strip().lower()
   finally:
     temp.close()  # May be called on already closed file.
     os.remove(temp.name)
