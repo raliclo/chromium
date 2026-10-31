@@ -12,6 +12,7 @@ import android.content.IntentFilter;
 import android.os.PowerManager;
 import android.os.SystemClock;
 
+import org.chromium.base.LegacySdk;
 import org.chromium.base.ContextUtils;
 import org.chromium.base.annotations.CalledByNative;
 import org.chromium.base.annotations.JNINamespace;
@@ -87,6 +88,12 @@ public class IdleDetector extends BroadcastReceiver {
         if (keyguardManager.inKeyguardRestrictedInputMode()) return true;
 
         PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+        if (LegacySdk.isActive()) return !isScreenOnLegacy(powerManager); // isInteractive is API 20.
         return !powerManager.isInteractive();
+    }
+
+    @SuppressWarnings("deprecation")
+    private static boolean isScreenOnLegacy(PowerManager powerManager) {
+        return powerManager.isScreenOn();
     }
 }

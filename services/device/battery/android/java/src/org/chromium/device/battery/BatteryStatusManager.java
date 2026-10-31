@@ -13,6 +13,7 @@ import android.os.BatteryManager;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
+import org.chromium.base.LegacySdk;
 import org.chromium.base.ContextUtils;
 import org.chromium.base.Log;
 import org.chromium.device.mojom.BatteryStatus;
@@ -60,8 +61,9 @@ class BatteryStatusManager {
     }
 
     BatteryStatusManager(BatteryStatusCallback callback) {
+        // No BatteryManager service before API 21: the intent alone, as with no manager.
         this(callback,
-                new AndroidBatteryManagerWrapper(
+                LegacySdk.isActive() ? null : new AndroidBatteryManagerWrapper(
                         (BatteryManager) ContextUtils.getApplicationContext().getSystemService(
                                 Context.BATTERY_SERVICE)));
     }

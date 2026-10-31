@@ -7,6 +7,8 @@ package org.chromium.content.browser.accessibility.captioning;
 import android.graphics.Typeface;
 import android.view.accessibility.CaptioningManager.CaptionStyle;
 
+import org.chromium.base.LegacySdk;
+
 /**
  * This is an internal representation of the captioning. This class follows
  * the paradigm that was introduced in KitKat while not using that API directly so that it can be
@@ -102,7 +104,8 @@ public class CaptioningStyle {
      * @return a Chromium CaptioningStyle object
      */
     public static CaptioningStyle createFrom(CaptionStyle captionStyle) {
-        if (captionStyle == null) {
+        // The has*() methods and windowColor are API 21: before it, the platform defaults.
+        if (captionStyle == null || LegacySdk.isActive()) {
             return new CaptioningStyle(null, null, null, null, null, null);
         }
 

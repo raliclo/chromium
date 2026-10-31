@@ -11,6 +11,7 @@ import android.view.inputmethod.CursorAnchorInfo;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
+import org.chromium.base.LegacySdk;
 import org.chromium.content_public.browser.InputMethodManagerWrapper;
 
 import java.util.Arrays;
@@ -88,6 +89,8 @@ final class CursorAnchorInfoController {
     public static CursorAnchorInfoController create(
             InputMethodManagerWrapper inputMethodManagerWrapper,
             ComposingTextDelegate composingTextDelegate) {
+        // No CursorAnchorInfo before API 21; ImeAdapterImpl works without a controller.
+        if (LegacySdk.isActive()) return null;
         return new CursorAnchorInfoController(inputMethodManagerWrapper,
                 composingTextDelegate, new ViewDelegate() {
                     @Override

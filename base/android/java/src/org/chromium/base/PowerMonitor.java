@@ -93,6 +93,7 @@ public class PowerMonitor {
         // created now.
         if (sInstance == null) create();
 
+        if (LegacySdk.isActive()) return 0; // BatteryManager.getIntProperty is API 21.
         return getRemainingBatteryCapacityImpl();
     }
 

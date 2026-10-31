@@ -18,6 +18,7 @@ import android.os.Build;
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
 
+import org.chromium.base.LegacySdk;
 import org.chromium.base.BuildInfo;
 import org.chromium.base.Log;
 import org.chromium.base.annotations.CalledByNative;
@@ -299,6 +300,8 @@ class MediaCodecUtil {
                 // https://developer.android.com/reference/android/media/MediaCodecInfo.CodecProfileLevel.html
                 try {
                     CodecCapabilities codecCapabilities = info.getCapabilitiesForType(mime);
+                    // No VideoCapabilities before API 21: VP9 is assumed unsupported, as the note above says.
+                    if (mime.endsWith("vp9") && LegacySdk.isActive()) continue;
                     if (mime.endsWith("vp9") && Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
                         addVp9CodecProfileLevels(profileLevels, codecCapabilities);
                         continue;

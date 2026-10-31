@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import androidx.annotation.VisibleForTesting;
 
+import org.chromium.base.LegacySdk;
 import org.chromium.base.ApiCompatibilityUtils;
 import org.chromium.content.R;
 import org.chromium.ui.UiUtils;
@@ -117,8 +118,10 @@ public abstract class SuggestionsPopupWindow
         // has a background set.
         mPopupWindow.setBackgroundDrawable(ApiCompatibilityUtils.getDrawable(
                 mContext.getResources(), R.drawable.floating_popup_background_light));
-        mPopupWindow.setElevation(mContext.getResources().getDimensionPixelSize(
-                R.dimen.text_suggestion_popup_elevation));
+        if (!LegacySdk.isActive()) { // PopupWindow.setElevation is API 21.
+            mPopupWindow.setElevation(mContext.getResources().getDimensionPixelSize(
+                    R.dimen.text_suggestion_popup_elevation));
+        }
 
         mPopupWindow.setInputMethodMode(PopupWindow.INPUT_METHOD_NOT_NEEDED);
         mPopupWindow.setFocusable(true);

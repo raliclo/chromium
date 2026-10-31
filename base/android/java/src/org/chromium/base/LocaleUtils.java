@@ -66,6 +66,8 @@ public class LocaleUtils {
         if (languageForChrome.equals(language)) {
             return locale;
         }
+        // Locale.Builder is API 21; before it, the same language, country and variant (the script is lost).
+        if (LegacySdk.isActive()) return new Locale(languageForChrome, locale.getCountry(), locale.getVariant());
         return new Locale.Builder().setLocale(locale).setLanguage(languageForChrome).build();
     }
 
@@ -100,6 +102,7 @@ public class LocaleUtils {
         if (languageForAndroid.equals(language)) {
             return locale;
         }
+        if (LegacySdk.isActive()) return new Locale(languageForAndroid, locale.getCountry(), locale.getVariant());
         return new Locale.Builder().setLocale(locale).setLanguage(languageForAndroid).build();
     }
 

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 
+import org.chromium.base.LegacySdk;
 import org.chromium.base.ContextUtils;
 import org.chromium.base.TraceEvent;
 import org.chromium.base.annotations.CalledByNative;
@@ -249,6 +250,13 @@ class TtsPlatformImpl {
         Bundle params = new Bundle();
         if (volume != 1.0) {
             params.putFloat(TextToSpeech.Engine.KEY_PARAM_VOLUME, volume);
+        }
+        if (LegacySdk.isActive()) {
+            // speak(CharSequence, int, Bundle, String) is API 21; the utterance id goes in the params.
+            java.util.HashMap<String, String> legacy = new java.util.HashMap<>();
+            if (volume != 1.0) legacy.put(TextToSpeech.Engine.KEY_PARAM_VOLUME, Float.toString(volume));
+            legacy.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, Integer.toString(utteranceId));
+            return mTextToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, legacy);
         }
         return mTextToSpeech.speak(
                 text, TextToSpeech.QUEUE_FLUSH, params, Integer.toString(utteranceId));

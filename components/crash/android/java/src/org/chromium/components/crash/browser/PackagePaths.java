@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.text.TextUtils;
 
+import org.chromium.base.LegacySdk;
 import org.chromium.base.BuildInfo;
 import org.chromium.base.ContextUtils;
 import org.chromium.base.annotations.CalledByNative;
@@ -41,7 +42,7 @@ public abstract class PackagePaths {
 
             List<String> zipPaths = new ArrayList<>(10);
             zipPaths.add(pi.applicationInfo.sourceDir);
-            if (pi.applicationInfo.splitSourceDirs != null) {
+            if (!LegacySdk.isActive() && pi.applicationInfo.splitSourceDirs != null) { // API 21 field
                 Collections.addAll(zipPaths, pi.applicationInfo.splitSourceDirs);
             }
 

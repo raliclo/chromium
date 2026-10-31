@@ -3635,6 +3635,7 @@ if (is_android) {
       "android/java/src/org/chromium/base/JNIUtils.java",
       "android/java/src/org/chromium/base/JavaExceptionReporter.java",
       "android/java/src/org/chromium/base/JavaHandlerThread.java",
+      "android/java/src/org/chromium/base/LegacySdk.java",
       "android/java/src/org/chromium/base/LifetimeAssert.java",
       "android/java/src/org/chromium/base/LocaleUtils.java",
       "android/java/src/org/chromium/base/Log.java",

@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import androidx.annotation.VisibleForTesting;
 import androidx.core.view.MarginLayoutParamsCompat;
 
+import org.chromium.base.LegacySdk;
 import org.chromium.base.ObserverList;
 import org.chromium.base.annotations.CalledByNative;
 import org.chromium.base.annotations.JNINamespace;
@@ -455,6 +456,7 @@ public class ViewAndroidDelegate {
                     return;
                 }
             }
+            if (LegacySdk.isActive()) return; // requestUnbufferedDispatch is API 21.
             container.requestUnbufferedDispatch(event);
         }
     }

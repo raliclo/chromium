@@ -22,6 +22,7 @@ import android.widget.PopupWindow.OnDismissListener;
 import androidx.annotation.IntDef;
 import androidx.annotation.VisibleForTesting;
 
+import org.chromium.base.LegacySdk;
 import org.chromium.base.ObserverList;
 
 import java.lang.annotation.Retention;
@@ -356,6 +357,7 @@ public class AnchoredPopupWindow implements OnTouchListener, RectProvider.Observ
      * Sets the elevation of the popup.
      */
     public void setElevation(float elevation) {
+        if (LegacySdk.isActive()) return; // PopupWindow.setElevation is API 21.
         mPopupWindow.setElevation(elevation);
     }
 

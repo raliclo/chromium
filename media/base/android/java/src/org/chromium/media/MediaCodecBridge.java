@@ -18,6 +18,7 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.view.Surface;
 
+import org.chromium.base.LegacySdk;
 import org.chromium.base.Log;
 import org.chromium.base.annotations.CalledByNative;
 import org.chromium.base.annotations.JNINamespace;
@@ -478,10 +479,24 @@ class MediaCodecBridge {
         return new GetOutputFormatResult(status, format);
     }
 
+    // Before API 21 MediaCodec has only the buffer arrays. / API 21 之前 MediaCodec 只有緩衝區陣列。
+    @SuppressWarnings("deprecation")
+    private ByteBuffer getInputBufferLegacy(int index) {
+        ByteBuffer buffer = mMediaCodec.getInputBuffers()[index];
+        buffer.clear();
+        return buffer;
+    }
+
+    @SuppressWarnings("deprecation")
+    private ByteBuffer getOutputBufferLegacy(int index) {
+        return mMediaCodec.getOutputBuffers()[index];
+    }
+
     /** Returns null if MediaCodec throws IllegalStateException. */
     @CalledByNative
     private ByteBuffer getInputBuffer(int index) {
         try {
+            if (LegacySdk.isActive()) return getInputBufferLegacy(index);
             return mMediaCodec.getInputBuffer(index);
         } catch (IllegalStateException e) {
             Log.e(TAG, "Failed to get input buffer", e);
@@ -493,6 +508,7 @@ class MediaCodecBridge {
     @CalledByNative
     protected ByteBuffer getOutputBuffer(int index) {
         try {
+            if (LegacySdk.isActive()) return getOutputBufferLegacy(index);
             return mMediaCodec.getOutputBuffer(index);
         } catch (IllegalStateException e) {
             Log.e(TAG, "Failed to get output buffer", e);
